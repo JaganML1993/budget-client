@@ -13,10 +13,11 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/admin/login`, {
+            const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}//admin/login`, {
                 email,
                 password,
             });
+            console.log(response);
 
             if (response.data.status === "success") {
                 localStorage.setItem("authToken", response.data.token);
