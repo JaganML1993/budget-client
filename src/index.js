@@ -13,12 +13,17 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 
 import ThemeContextWrapper from "./components/ThemeWrapper/ThemeWrapper";
 import BackgroundColorWrapper from "./components/BackgroundColorWrapper/BackgroundColorWrapper";
-import { AuthProvider } from "./contexts/AuthContext"; // Import AuthProvider
+import { AuthProvider, useAuth } from "./contexts/AuthContext"; // Import useAuth to use the loading state
+import Loader from "./components/Loader"; // Import the Loader component
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
+const App = () => {
+  const { loading } = useAuth(); // Access loading state from AuthContext
 
-root.render(
-  <AuthProvider> {/* Wrap your app with AuthProvider */}
+  if (loading) {
+    return <Loader />; // Show loader while the app is in the loading state
+  }
+
+  return (
     <ThemeContextWrapper>
       <BackgroundColorWrapper>
         <BrowserRouter>
@@ -31,13 +36,18 @@ root.render(
             <Route path="/auth/*" element={<AuthLayout />} />
 
             {/* Default route */}
-            <Route
-              path="*"
-              element={<Navigate to="/admin/dashboard" replace />}
-            />
+            <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
           </Routes>
         </BrowserRouter>
       </BackgroundColorWrapper>
     </ThemeContextWrapper>
+  );
+};
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+
+root.render(
+  <AuthProvider> {/* Wrap the app with AuthProvider */}
+    <App />
   </AuthProvider>
 );

@@ -231,7 +231,7 @@ function Tables() {
                     </thead>
                     <tbody>
                       {expenses.map((expense, index) => (
-                        <tr key={expense.id}>
+                        <tr key={expense._id}>
                           <td>{index + 1}</td>
                           <td>{expense.name}</td>
                           <td className="text-center">
@@ -243,8 +243,8 @@ function Tables() {
                           <td>{categoryMap[expense.category]}</td>
                           <td>{formatDate(expense.paidOn)}</td>
                           <td>
-                            <Button color="info" size="sm" style={{ marginRight: '5px' }} onClick={() => goToViewExpense(expense.id)}>View</Button>
-                            <Button color="warning" size="sm" onClick={() => goToEditExpense(expense.id)}>Edit</Button>
+                            <Button color="info" size="sm" style={{ marginRight: '5px' }} onClick={() => goToViewExpense(expense._id)}>View</Button>
+                            <Button color="warning" size="sm" onClick={() => goToEditExpense(expense._id)}>Edit</Button>
                           </td>
 
                         </tr>

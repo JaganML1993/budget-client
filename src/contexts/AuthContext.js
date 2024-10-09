@@ -4,12 +4,14 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [loading, setLoading] = useState(true); // Add a global loading state
 
     useEffect(() => {
         const token = localStorage.getItem("authToken");
         if (token) {
-            setIsAuthenticated(true); // User is logged in if token exists
+            setIsAuthenticated(true); // User is authenticated if token exists
         }
+        setLoading(false); // Set loading to false after checking token
     }, []);
 
     const login = () => {
@@ -17,12 +19,12 @@ export const AuthProvider = ({ children }) => {
     };
 
     const logout = () => {
-        localStorage.removeItem("authToken"); // Remove token on logout
+        localStorage.removeItem("authToken");
         setIsAuthenticated(false);
     };
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+        <AuthContext.Provider value={{ isAuthenticated, loading, login, logout }}>
             {children}
         </AuthContext.Provider>
     );
