@@ -17,6 +17,7 @@ import {
   Col,
 } from "reactstrap";
 import { Navigate } from "react-router-dom";
+import { useAuth } from "contexts/AuthContext";
 
 function CreateExpense() {
   const [expenseData, setExpenseData] = useState({
@@ -27,6 +28,8 @@ function CreateExpense() {
     remarks: "", // Added remarks
     attachment: null, // For storing the selected file
   });
+
+  const { userId } = useAuth();
 
   const [redirect, setRedirect] = useState(false); // State for redirecting
 
@@ -59,6 +62,8 @@ function CreateExpense() {
     if (expenseData.attachment) {
       formData.append("attachment", expenseData.attachment);
     }
+
+    formData.append("createdBy", userId);
 
     try {
       const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/admin/expense/store`, formData, {

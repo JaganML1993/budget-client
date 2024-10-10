@@ -1,17 +1,22 @@
-import React from 'react';
+import React from "react";
+import { RotatingLines } from "react-loader-spinner";
 
-const Loader = () => (
-  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-    <div className="spinner" style={{ width: '50px', height: '50px', borderRadius: '50%', border: '5px solid gray', borderTopColor: 'transparent', animation: 'spin 1s linear infinite' }}></div>
-    <style>
-      {`
-      @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-      }
-      `}
-    </style>
-  </div>
-);
+const Loader = ({
+  strokeColor = "grey",
+  strokeWidth = "5",
+  animationDuration = "0.75",
+  width = "96"
+}) => {
+  return (
+    <div className="loader-container">
+      <RotatingLines
+        strokeColor={strokeColor}
+        strokeWidth={strokeWidth}
+        animationDuration={animationDuration}
+        width={width}
+      />
+    </div>
+  );
+};
 
 export default Loader;

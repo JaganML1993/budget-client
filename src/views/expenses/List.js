@@ -13,6 +13,7 @@ import {
   Input,
   Label,
 } from "reactstrap"; // Import necessary components
+import { useAuth } from "contexts/AuthContext";
 
 function Tables() {
   const navigate = useNavigate();
@@ -22,6 +23,7 @@ function Tables() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("thisMonth"); // Default to this month
+  const { userId } = useAuth();
 
   // Mapping for category IDs to category names
   const categoryMap = {
@@ -103,6 +105,7 @@ function Tables() {
       }
 
       try {
+        params.createdBy = userId;
         const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/admin/expenses`, { params });
         setExpenses(response.data.data);
       } catch (error) {

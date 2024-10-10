@@ -14,13 +14,13 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import ThemeContextWrapper from "./components/ThemeWrapper/ThemeWrapper";
 import BackgroundColorWrapper from "./components/BackgroundColorWrapper/BackgroundColorWrapper";
 import { AuthProvider, useAuth } from "./contexts/AuthContext"; // Import useAuth to use the loading state
-import Loader from "./components/Loader"; // Import the Loader component
 
 const App = () => {
-  const { loading } = useAuth(); // Access loading state from AuthContext
+  const { isAuthenticated, loading } = useAuth(); // Access loading state and authentication status
 
+  // Show a loading indicator while determining authentication status
   if (loading) {
-    return <Loader />; // Show loader while the app is in the loading state
+    return <div>Loading...</div>; // Replace with a better loading indicator if needed
   }
 
   return (
@@ -29,14 +29,20 @@ const App = () => {
         <BrowserRouter>
           <ToastContainer />
           <Routes>
-            {/* Admin routes */}
-            <Route path="/admin/*" element={<AdminLayout />} />
-
-            {/* Auth routes */}
-            <Route path="/auth/*" element={<AuthLayout />} />
-
-            {/* Default route */}
-            <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
+            {/* Conditionally render based on authentication status */}
+            {isAuthenticated ? (
+              <>
+                {/* Admin routes */}
+                <Route path="/admin/*" element={<AdminLayout />} />
+                <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
+              </>
+            ) : (
+              <>
+                {/* Auth routes */}
+                <Route path="/auth/*" element={<AuthLayout />} />
+                <Route path="*" element={<Navigate to="/auth/login" replace />} />
+              </>
+            )}
           </Routes>
         </BrowserRouter>
       </BackgroundColorWrapper>
