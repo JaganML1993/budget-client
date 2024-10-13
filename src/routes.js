@@ -81,13 +81,13 @@ var routes = [
     component: <Logout />,
     layout: "/admin",
   },
-  {
-    path: "/icons",
-    name: "Icons",
-    icon: "tim-icons icon-atom",
-    component: <Icons />,
-    layout: "/admin",
-  },
+  // {
+  //   path: "/icons",
+  //   name: "Icons",
+  //   icon: "tim-icons icon-atom",
+  //   component: <Icons />,
+  //   layout: "/admin",
+  // },
 ];
 
 export default routes;
