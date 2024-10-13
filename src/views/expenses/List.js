@@ -12,8 +12,11 @@ import {
   Button,
   Input,
   Label,
+  UncontrolledTooltip, // Import Tooltip component
 } from "reactstrap"; // Import necessary components
 import { useAuth } from "contexts/AuthContext";
+import Loader from "components/Loader";
+import { FaSyncAlt, FaEye, FaEdit } from "react-icons/fa"; // Import the necessary icons
 
 function Tables() {
   const navigate = useNavigate();
@@ -33,6 +36,7 @@ function Tables() {
     4: "Cash",
     5: "Transferred To",
     6: "Bill Payment",
+    7: "Savings",
   };
 
   // Function to format the date to d-m-y
@@ -116,7 +120,7 @@ function Tables() {
     };
 
     fetchExpenses();
-  }, [category, selectedFilter]);
+  }, [category, selectedFilter, userId]); // Added userId to dependency array
 
   // Filter button handler
   const handleFilterClick = (filter) => {
@@ -131,6 +135,11 @@ function Tables() {
   // Function to handle navigation to the Edit Expense page
   const goToEditExpense = (id) => {
     navigate(`/admin/expenses/edit/${id}`);
+  };
+
+  // Function to handle navigation to the Update Balance page
+  const goToUpdateBalance = (id) => {
+    navigate(`/admin/expenses/history-update-balance/${id}`);
   };
 
   return (
@@ -163,6 +172,7 @@ function Tables() {
                       <option value="4">Cash</option>
                       <option value="5">Transferred To</option>
                       <option value="6">Bill Payment</option>
+                      <option value="7">Savings</option>
                     </Input>
                   </Col>
                   <Col md="4">
@@ -219,7 +229,7 @@ function Tables() {
                   </h5>
                 </div>
                 {loading ? (
-                  <div>Loading...</div>
+                  <Loader />
                 ) : (
                   <Table className="tablesorter" responsive>
                     <thead className="text-primary">
@@ -246,10 +256,63 @@ function Tables() {
                           <td>{categoryMap[expense.category]}</td>
                           <td>{formatDate(expense.paidOn)}</td>
                           <td>
-                            <Button color="info" size="sm" style={{ marginRight: '5px' }} onClick={() => goToViewExpense(expense._id)}>View</Button>
-                            <Button color="warning" size="sm" onClick={() => goToEditExpense(expense._id)}>Edit</Button>
-                          </td>
+                            {/* View Button with Icon */}
+                            <Button
+                              color="success"
+                              size="sm"
+                              style={{ marginRight: '5px' }}
+                              onClick={() => goToViewExpense(expense._id)}
+                              id={`view-tooltip-${expense._id}`}
+                              aria-label="View Expense"
+                            >
+                              <FaEye />
+                            </Button>
+                            <UncontrolledTooltip
+                              placement="top"
+                              target={`view-tooltip-${expense._id}`}
+                            >
+                              View Expense
+                            </UncontrolledTooltip>
 
+                            {/* Edit Button with Icon */}
+                            <Button
+                              color="warning"
+                              size="sm"
+                              style={{ marginRight: '5px' }}
+                              onClick={() => goToEditExpense(expense._id)}
+                              id={`edit-tooltip-${expense._id}`}
+                              aria-label="Edit Expense"
+                            >
+                              <FaEdit />
+                            </Button>
+                            <UncontrolledTooltip
+                              placement="top"
+                              target={`edit-tooltip-${expense._id}`}
+                            >
+                              Edit Expense
+                            </UncontrolledTooltip>
+
+                            {/* Update Balance Button with Icon (Only for Cash Category) */}
+                            {expense.category == "7" && (
+                              <>
+                                <Button
+                                  color="info"
+                                  size="sm"
+                                  onClick={() => goToUpdateBalance(expense._id)}
+                                  id={`update-balance-tooltip-${expense._id}`}
+                                  aria-label="Update Balance"
+                                >
+                                  <FaSyncAlt />
+                                </Button>
+                                <UncontrolledTooltip
+                                  placement="top"
+                                  target={`update-balance-tooltip-${expense._id}`}
+                                >
+                                  Update Balance
+                                </UncontrolledTooltip>
+                              </>
+                            )}
+                          </td>
                         </tr>
                       ))}
                     </tbody>

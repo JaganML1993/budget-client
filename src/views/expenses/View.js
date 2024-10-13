@@ -23,6 +23,7 @@ function ViewExpense() {
         category: "",
         paidOn: "",
         attachment: "", // Use single string for one attachment
+        remarks: "", // Initialize remarks
     });
     const [loading, setLoading] = useState(true); // State for loading
     const [error, setError] = useState(null); // State for error handling
@@ -53,6 +54,7 @@ function ViewExpense() {
                         category: expense.category,
                         paidOn: new Date(expense.paidOn).toLocaleDateString("en-GB"),
                         attachment: `${BASE_URL}/${expense.attachment.replace(/\\/g, '/')}`, // Format path correctly
+                        remarks: expense.remarks || "", // Set remarks from the response
                     });
                 } else {
                     throw new Error("No expense data found");
@@ -115,6 +117,12 @@ function ViewExpense() {
                                         <FormGroup>
                                             <label>Paid On</label>
                                             <p className="form-control-static">{expenseData.paidOn}</p>
+                                        </FormGroup>
+                                    </Col>
+                                    <Col md="12">
+                                        <FormGroup>
+                                            <label>Remarks</label>
+                                            <p className="form-control-static">{expenseData.remarks}</p>
                                         </FormGroup>
                                     </Col>
                                 </Row>

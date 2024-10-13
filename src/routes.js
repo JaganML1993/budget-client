@@ -4,6 +4,7 @@ import Expenses from "views/expenses/List.js";
 import ExpensesCreate from "views/expenses/Create.js";
 import ExpensesEdit from "views/expenses/Edit.js";
 import ExpensesView from "views/expenses/View.js";
+import ListUpdateBalance from "views/expenses/ListUpdateBalance.js";
 import Logout from "views/auth/Logout.js"; // Import Logout component
 import ProtectedRoute from "../src/components/ProtectedRoute"; // Import ProtectedRoute
 import Icons from "views/Icons.js";
@@ -60,6 +61,15 @@ var routes = [
     component: (
       <ProtectedRoute>
         <ExpensesView />
+      </ProtectedRoute>
+    ),
+    layout: "/admin",
+  },
+  {
+    path: "/expenses/history-update-balance/:id",
+    component: (
+      <ProtectedRoute>
+        <ListUpdateBalance />
       </ProtectedRoute>
     ),
     layout: "/admin",

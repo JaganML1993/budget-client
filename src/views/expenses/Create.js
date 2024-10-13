@@ -16,10 +16,11 @@ import {
   Row,
   Col,
 } from "reactstrap";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "contexts/AuthContext";
 
 function CreateExpense() {
+  const navigate = useNavigate();
   const [expenseData, setExpenseData] = useState({
     name: "",
     amount: "",
@@ -116,6 +117,10 @@ function CreateExpense() {
     return <Navigate to="/admin/expenses" />;
   }
 
+  const handleBack = () => {
+    navigate("/admin/expenses"); // Navigate back to the expenses list
+  };
+
   return (
     <>
       <div className="content">
@@ -170,6 +175,7 @@ function CreateExpense() {
                           <option value="6">Bill Payment</option>
                           <option value="5">Transferred To</option>
                           <option value="4">Cash</option>
+                          <option value="7">Savings</option>
                         </Input>
                       </FormGroup>
                     </Col>
@@ -212,6 +218,14 @@ function CreateExpense() {
                     </Col>
                   </Row>
                   <CardFooter>
+                    <Button
+                      className="mr-2"
+                      color="secondary"
+                      type="button"
+                      onClick={handleBack}
+                    >
+                      Back
+                    </Button>
                     <Button className="btn-fill" color="primary" type="submit">
                       Save
                     </Button>

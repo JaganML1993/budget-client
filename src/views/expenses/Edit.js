@@ -16,9 +16,10 @@ import {
   Row,
   Col,
 } from "reactstrap";
-import { Navigate, useParams } from "react-router-dom";
+import { Navigate, useParams, useNavigate } from "react-router-dom";
 
 function EditExpense() {
+  const navigate = useNavigate();
   const { id } = useParams(); // Get the expense ID from the URL
   const [expenseData, setExpenseData] = useState({
     name: "",
@@ -126,6 +127,10 @@ function EditExpense() {
     return <Navigate to="/admin/expenses" />;
   }
 
+  const handleBack = () => {
+    navigate("/admin/expenses"); // Navigate back to the expenses list
+  };
+
   return (
     <>
       <div className="content">
@@ -180,6 +185,7 @@ function EditExpense() {
                           <option value="6">Bill Payment</option>
                           <option value="5">Transferred To</option>
                           <option value="4">Cash</option>
+                          <option value="7">Savings</option>
                         </Input>
                       </FormGroup>
                     </Col>
@@ -222,6 +228,14 @@ function EditExpense() {
                     </Col>
                   </Row>
                   <CardFooter>
+                    <Button
+                      className="mr-2"
+                      color="secondary"
+                      type="button"
+                      onClick={handleBack}
+                    >
+                      Back
+                    </Button>
                     <Button className="btn-fill" color="primary" type="submit">
                       Update
                     </Button>
