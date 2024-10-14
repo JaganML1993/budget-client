@@ -20,7 +20,7 @@ const Dashboard = () => {
     2: "Shopping",
     3: "EMI",
     4: "Cash",
-    5: "Transferred To",
+    5: "Others",
     6: "Bill Payment",
     7: "Savings",
   };
