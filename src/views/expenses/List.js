@@ -12,11 +12,15 @@ import {
   Button,
   Input,
   Label,
-  UncontrolledTooltip, // Import Tooltip component
+  UncontrolledTooltip,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
 } from "reactstrap"; // Import necessary components
 import { useAuth } from "contexts/AuthContext";
 import Loader from "components/Loader";
-import { FaSyncAlt, FaEye, FaEdit } from "react-icons/fa"; // Import the necessary icons
+import { FaSyncAlt, FaEye, FaEdit, FaTrash } from "react-icons/fa"; // Import the necessary icons
 
 function Tables() {
   const navigate = useNavigate();
@@ -28,13 +32,30 @@ function Tables() {
   const [selectedFilter, setSelectedFilter] = useState("thisMonth"); // Default to this month
   const { userId } = useAuth();
 
+  // State for modal
+  const [modal, setModal] = useState(false);
+  const [expenseToDelete, setExpenseToDelete] = useState(null);
+
+  // Toggle modal visibility
+  const toggleModal = () => setModal(!modal);
+
+  // Color mapping for each category
+  const categoryBadgeMap = {
+    1: "primary",  // House Expenses - blue
+    2: "warning",  // Shopping - yellow
+    3: "danger",   // EMI - red
+    4: "info",     // Cash - light blue
+    5: "secondary",// Others - gray
+    6: "success",  // Bill Payment - green
+    7: "success",  // Savings - green
+  };
   // Mapping for category IDs to category names
   const categoryMap = {
     1: "House Expenses",
     2: "Shopping",
     3: "EMI",
     4: "Cash",
-    5: "Transferred To",
+    5: "Others",
     6: "Bill Payment",
     7: "Savings",
   };
@@ -61,6 +82,8 @@ function Tables() {
       if (category) params.category = category;
       if (startDate) params.startDate = startDate;
       if (endDate) params.endDate = endDate;
+
+      // Add date range logic here
       if (selectedFilter === "thisMonth") {
         const today = new Date();
         const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -120,7 +143,8 @@ function Tables() {
     };
 
     fetchExpenses();
-  }, [category, selectedFilter, userId]); // Added userId to dependency array
+  }, [category, selectedFilter, startDate, endDate, userId]); // Added startDate and endDate to the dependency array
+
 
   // Filter button handler
   const handleFilterClick = (filter) => {
@@ -140,6 +164,24 @@ function Tables() {
   // Function to handle navigation to the Update Balance page
   const goToUpdateBalance = (id) => {
     navigate(`/admin/expenses/history-update-balance/${id}`);
+  };
+
+  // Function to handle the delete button click
+  const handleDeleteClick = (id) => {
+    deleteExpense(id);
+  };
+
+  const deleteExpense = async (id) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this expense?");
+    if (!confirmDelete) return;
+
+    try {
+      await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/admin/expenses/${id}`);
+      // Remove the deleted expense from the state to update the UI
+      setExpenses((prevExpenses) => prevExpenses.filter(expense => expense._id !== id));
+    } catch (error) {
+      console.error("Error deleting expense:", error);
+    }
   };
 
   return (
@@ -170,7 +212,7 @@ function Tables() {
                       <option value="2">Shopping</option>
                       <option value="3">EMI</option>
                       <option value="4">Cash</option>
-                      <option value="5">Transferred To</option>
+                      <option value="5">Others</option>
                       <option value="6">Bill Payment</option>
                       <option value="7">Savings</option>
                     </Input>
@@ -198,7 +240,7 @@ function Tables() {
                 {/* Time filter buttons */}
                 <Row className="mb-3">
                   {["thisMonth", "lastMonth", "thisWeek", "lastWeek", "today", "yesterday"].map((filter) => (
-                    <Col key={filter} md="2">
+                    <Col key={filter} md="2" className="mb-2">
                       <Button
                         color={selectedFilter === filter ? "primary" : "secondary"}
                         onClick={() => handleFilterClick(filter)}
@@ -253,7 +295,11 @@ function Tables() {
                               : parseFloat(expense.amount)?.toFixed(2) || '0.00'} {/* Display '0.00' if NaN */}
                           </td>
 
-                          <td>{categoryMap[expense.category]}</td>
+                          <td>
+                            <span className={`badge badge-${categoryBadgeMap[expense.category]}`}>
+                              {categoryMap[expense.category] || 'Unknown'}
+                            </span>
+                          </td>
                           <td>{formatDate(expense.paidOn)}</td>
                           <td>
                             {/* View Button with Icon */}
@@ -276,7 +322,7 @@ function Tables() {
 
                             {/* Edit Button with Icon */}
                             <Button
-                              color="warning"
+                              color="info"
                               size="sm"
                               style={{ marginRight: '5px' }}
                               onClick={() => goToEditExpense(expense._id)}
@@ -292,8 +338,27 @@ function Tables() {
                               Edit Expense
                             </UncontrolledTooltip>
 
-                            {/* Update Balance Button with Icon (Only for Cash Category) */}
-                            {expense.category == "7" && (
+                            {/* Delete Button with Icon */}
+                            <Button
+                              color="danger"
+                              size="sm"
+                              style={{ marginRight: '5px' }}
+                              onClick={() => handleDeleteClick(expense._id)}
+                              id={`delete-tooltip-${expense._id}`}
+                              aria-label="Delete Expense"
+                            >
+                              <FaTrash />
+                            </Button>
+
+                            <UncontrolledTooltip
+                              placement="top"
+                              target={`delete-tooltip-${expense._id}`}
+                            >
+                              Delete Expense
+                            </UncontrolledTooltip>
+
+                            {/* Update Balance Button with Icon (Only for Savings Category) */}
+                            {expense.category === 7 && (
                               <>
                                 <Button
                                   color="info"

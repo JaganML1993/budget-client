@@ -183,9 +183,9 @@ function EditExpense() {
                           <option value="2">Shopping</option>
                           <option value="3">EMI</option>
                           <option value="6">Bill Payment</option>
-                          <option value="5">Transferred To</option>
                           <option value="4">Cash</option>
                           <option value="7">Savings</option>
+                          <option value="5">Others</option>
                         </Input>
                       </FormGroup>
                     </Col>
