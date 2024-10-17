@@ -105,9 +105,9 @@ function Tables() {
         <Col md="12">
           <Card className="card-plain">
             <CardHeader className="d-flex justify-content-between align-items-center">
-              <CardTitle tag="h4">Commitment Histories  {commitmentDetails && (
-                <span style={{ color: "#2980b9" }}>{commitmentDetails.payFor}</span>
-              )}</CardTitle>
+              <CardTitle tag="h4">
+                Commitment Histories {commitmentDetails && commitmentDetails.payFor}
+              </CardTitle>
 
               <Button
                 className="btn-fill"
