@@ -5,21 +5,26 @@ import ExpensesCreate from "views/expenses/Create.js";
 import ExpensesEdit from "views/expenses/Edit.js";
 import ExpensesView from "views/expenses/View.js";
 import ListUpdateBalance from "views/expenses/ListUpdateBalance.js";
+import Commitments from "views/commitments/List.js";
+import CommitmentsCreate from "views/commitments/Create.js";
+import CommitmentsView from "views/commitments/View.js";
+import CommitmentsEdit from "views/commitments/Edit.js";
+import CommitmentsHistory from "views/history/List.js";
+import CommitmentsHistoryCreate from "views/history/Create.js";
+import CommitmentsHistoryEdit from "views/history/Edit.js";
 import Logout from "views/auth/Logout.js"; // Import Logout component
 import ProtectedRoute from "../src/components/ProtectedRoute"; // Import ProtectedRoute
-import Icons from "views/Icons.js";
 
 var routes = [
   {
     path: "/login",
-    name: "Login",
     component: <Login />,
     layout: "/auth",
   },
   {
     path: "/dashboard",
     name: "Dashboard",
-    icon: "tim-icons icon-chart-pie-36",
+    icon: "tim-icons icon-chart-pie-36", // Dashboard pie chart icon
     component: (
       <ProtectedRoute>
         <Dashboard />
@@ -30,7 +35,7 @@ var routes = [
   {
     path: "/expenses",
     name: "Expenses",
-    icon: "tim-icons icon-atom",
+    icon: "tim-icons icon-bag-16", // Bag icon for expenses
     component: (
       <ProtectedRoute>
         <Expenses />
@@ -75,19 +80,77 @@ var routes = [
     layout: "/admin",
   },
   {
+    path: "/commitments",
+    name: "Commitments",
+    icon: "tim-icons icon-notes", // Notes icon for commitments
+    component: (
+      <ProtectedRoute>
+        <Commitments />
+      </ProtectedRoute>
+    ),
+    layout: "/admin",
+  },
+  {
+    path: "/commitments/create",
+    component: (
+      <ProtectedRoute>
+        <CommitmentsCreate />
+      </ProtectedRoute>
+    ),
+    layout: "/admin",
+  },
+  {
+    path: "/commitments/view/:id",
+    component: (
+      <ProtectedRoute>
+        <CommitmentsView />
+      </ProtectedRoute>
+    ),
+    layout: "/admin",
+  },
+  {
+    path: "/commitments/edit/:id",
+    component: (
+      <ProtectedRoute>
+        <CommitmentsEdit />
+      </ProtectedRoute>
+    ),
+    layout: "/admin",
+  },
+  {
+    path: "/commitments/history/:commitmentId",
+    component: (
+      <ProtectedRoute>
+        <CommitmentsHistory />
+      </ProtectedRoute>
+    ),
+    layout: "/admin",
+  },
+  {
+    path: "/commitments/history/create/:commitmentId",
+    component: (
+      <ProtectedRoute>
+        <CommitmentsHistoryCreate />
+      </ProtectedRoute>
+    ),
+    layout: "/admin",
+  },
+  {
+    path: "/commitments/history/edit/:id",
+    component: (
+      <ProtectedRoute>
+        <CommitmentsHistoryEdit />
+      </ProtectedRoute>
+    ),
+    layout: "/admin",
+  },
+  {
     path: "/logout", // Add logout route
     name: "Logout",
-    icon: "tim-icons icon-simple-remove",
+    icon: "tim-icons icon-simple-remove", // Remove icon for logout
     component: <Logout />,
     layout: "/admin",
   },
-  // {
-  //   path: "/icons",
-  //   name: "Icons",
-  //   icon: "tim-icons icon-atom",
-  //   component: <Icons />,
-  //   layout: "/admin",
-  // },
 ];
 
 export default routes;

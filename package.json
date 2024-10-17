@@ -22,6 +22,7 @@
     "react-loader-spinner": "^6.1.6",
     "react-notification-alert": "0.0.13",
     "react-paginate": "^8.2.0",
+    "react-quill": "^2.0.0",
     "react-router-dom": "6.11.1",
     "react-scripts": "5.0.1",
     "react-toastify": "^10.0.5",

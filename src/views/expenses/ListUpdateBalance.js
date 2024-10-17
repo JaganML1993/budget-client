@@ -333,7 +333,7 @@ function UpdateBalance() {
                     {loading ? (
                       <Loader />
                     ) : (
-                      <Table responsive>
+                      <Table>
                         <thead>
                           <tr>
                             <th>Amount</th>
