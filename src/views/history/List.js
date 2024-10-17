@@ -106,7 +106,7 @@ function Tables() {
           <Card className="card-plain">
             <CardHeader className="d-flex justify-content-between align-items-center">
               <CardTitle tag="h4">
-                Commitment Histories {commitmentDetails && commitmentDetails.payFor}
+                Commitment Histories of {commitmentDetails && commitmentDetails.payFor}
               </CardTitle>
 
               <Button
