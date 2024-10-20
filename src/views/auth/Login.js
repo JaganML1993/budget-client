@@ -100,8 +100,8 @@ const Login = () => {
               <line x1="23" y1="11" x2="17" y2="11" />
             </svg>
             <h1>Hello, friend!</h1>
-            <p>Enter your personal details and start your journey with us</p>
-            <button type="button" id="register">
+            {/* <p>Enter your personal details and start your journey with us</p> */}
+            {/* <button type="button" id="register">
               Register
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -119,7 +119,7 @@ const Login = () => {
                 <polyline points="12 16 16 12 12 8" />
                 <line x1="8" y1="12" x2="16" y2="12" />
               </svg>
-            </button>
+            </button> */}
           </div>
         </div>
       </div>

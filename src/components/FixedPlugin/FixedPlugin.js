@@ -1,15 +1,36 @@
-import React from "react";
-
-// reactstrap components
+import React, { useEffect, useState } from "react";
 import { Dropdown, DropdownToggle, Badge } from "reactstrap";
 import { ThemeContext, themes } from "contexts/ThemeContext";
 import { backgroundColors } from "contexts/BackgroundColorContext";
 
 function FixedPlugin(props) {
-  const [dropDownIsOpen, setdropDownIsOpen] = React.useState(false);
+  const [dropDownIsOpen, setdropDownIsOpen] = useState(false);
+  const [bgColor, setBgColor] = useState(
+    localStorage.getItem("bgColor") || backgroundColors.blue
+  ); // Set initial bgColor from localStorage
+  const [theme, setTheme] = useState(
+    localStorage.getItem("theme") === "dark" ? themes.dark : themes.light
+  ); // Set initial theme from localStorage
+
   const handleClick = () => {
     setdropDownIsOpen(!dropDownIsOpen);
   };
+
+  const handleBgClick = (color) => {
+    setBgColor(color);
+    localStorage.setItem("bgColor", color);
+    props.handleBgClick(color); // Propagate the change if needed
+  };
+
+  const handleThemeChange = (newTheme) => {
+    setTheme(newTheme);
+    localStorage.setItem("theme", newTheme === themes.dark ? "dark" : "light");
+  };
+
+  useEffect(() => {
+    props.handleBgClick(bgColor); // Ensure parent component is updated
+  }, [bgColor, props]);
+
   return (
     <div className="fixed-plugin">
       <Dropdown isOpen={dropDownIsOpen} toggle={handleClick}>
@@ -22,30 +43,18 @@ function FixedPlugin(props) {
             <div className="badge-colors text-center">
               <Badge
                 color="primary"
-                className={
-                  props.bgColor === backgroundColors.primary ? "active" : ""
-                }
-                onClick={() => {
-                  props.handleBgClick(backgroundColors.primary);
-                }}
+                className={bgColor === backgroundColors.primary ? "active" : ""}
+                onClick={() => handleBgClick(backgroundColors.primary)}
               />{" "}
               <Badge
                 color="info"
-                className={
-                  props.bgColor === backgroundColors.blue ? "active" : ""
-                }
-                onClick={() => {
-                  props.handleBgClick(backgroundColors.blue);
-                }}
+                className={bgColor === backgroundColors.blue ? "active" : ""}
+                onClick={() => handleBgClick(backgroundColors.blue)}
               />{" "}
               <Badge
                 color="success"
-                className={
-                  props.bgColor === backgroundColors.green ? "active" : ""
-                }
-                onClick={() => {
-                  props.handleBgClick(backgroundColors.green);
-                }}
+                className={bgColor === backgroundColors.green ? "active" : ""}
+                onClick={() => handleBgClick(backgroundColors.green)}
               />{" "}
             </div>
           </li>
@@ -56,11 +65,17 @@ function FixedPlugin(props) {
                   <span className="color-label">LIGHT MODE</span>{" "}
                   <Badge
                     className="light-badge mr-2"
-                    onClick={() => changeTheme(themes.light)}
+                    onClick={() => {
+                      handleThemeChange(themes.light);
+                      changeTheme(themes.light);
+                    }}
                   />{" "}
                   <Badge
                     className="dark-badge ml-2"
-                    onClick={() => changeTheme(themes.dark)}
+                    onClick={() => {
+                      handleThemeChange(themes.dark);
+                      changeTheme(themes.dark);
+                    }}
                   />{" "}
                   <span className="color-label">DARK MODE</span>{" "}
                 </>
