@@ -31,7 +31,6 @@ function Tables() {
     const fetchCommitmentDetails = async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/admin/commitments/view/${commitmentId}`);
-        console.log(response);
         setCommitmentDetails(response.data.data);
       } catch (error) {
         toast.error("Failed to fetch commitment details.", { autoClose: 2000 });

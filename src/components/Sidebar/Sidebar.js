@@ -1,5 +1,5 @@
 /*eslint-disable*/
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink, Link, useLocation } from "react-router-dom";
 // nodejs library to set properties for components
 import { PropTypes } from "prop-types";
@@ -13,12 +13,35 @@ import {
   BackgroundColorContext,
   backgroundColors,
 } from "contexts/BackgroundColorContext";
+import { useAuth } from "contexts/AuthContext";
+import axios from "axios";
 
 var ps;
 
 function Sidebar(props) {
+  const { userId } = useAuth();
   const location = useLocation();
   const sidebarRef = React.useRef(null);
+  const [userName, setUserName] = useState("");
+
+  useEffect(() => {
+    const fetchDetails = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/admin/details`, {
+          params: { createdBy: userId },
+        });
+
+        // Update to use the correct field name
+        setUserName(response.data.data.name); // This should match the name returned by the backend
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+      }
+    };
+
+    fetchDetails();
+  }, [userId]);
+
+
   // verifies if routeName is the one active (in browser input)
   const activeRoute = (routeName) => {
     return location.pathname === routeName ? "active" : "";
@@ -62,7 +85,7 @@ function Sidebar(props) {
           target="_blank"
           onClick={props.toggleSidebar}
         >
-          JV Dashboard
+          {userName ? `Hi, ${userName}` : "JV Dashboard"}
         </a>
       );
     } else {
@@ -83,7 +106,7 @@ function Sidebar(props) {
           className="simple-text logo-normal"
           onClick={props.toggleSidebar}
         >
-          JV Dashboard
+          {userName ? `Hi, ${userName}` : "JV Dashboard"}
         </Link>
       );
     }
