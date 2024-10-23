@@ -53,43 +53,116 @@ function Tables() {
     7: "Savings",
   };
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
-    return `${day}-${month}-${year}`;
+  const fetchExpenses = async () => {
+    const params = {
+      page: currentPage,
+      limit,
+      createdBy: userId,
+      ...(category && { category }),
+      ...(startDate && { startDate }),
+      ...(endDate && { endDate }),
+    };
+
+    const today = new Date();
+
+    // Set the start and end date based on the selected filter if dates are not set
+    if (!startDate || !endDate) {
+      switch (selectedFilter) {
+        case "thisMonth":
+          const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+          params.startDate = startOfMonth.toISOString().split("T")[0];
+          params.endDate = today.toISOString().split("T")[0];
+          break;
+        case "lastMonth":
+          const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1);
+          params.startDate = new Date(lastMonth.getFullYear(), lastMonth.getMonth(), 1).toISOString().split("T")[0];
+          params.endDate = new Date(lastMonth.getFullYear(), lastMonth.getMonth() + 1, 0).toISOString().split("T")[0];
+          break;
+        case "thisWeek":
+          const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
+          params.startDate = startOfWeek.toISOString().split("T")[0];
+          params.endDate = today.toISOString().split("T")[0];
+          break;
+        case "lastWeek":
+          const lastWeekStart = new Date(today.setDate(today.getDate() - today.getDay() - 7));
+          params.startDate = lastWeekStart.toISOString().split("T")[0];
+          params.endDate = new Date(today.setDate(today.getDate() - today.getDay() - 1)).toISOString().split("T")[0];
+          break;
+        case "today":
+          params.startDate = today.toISOString().split("T")[0];
+          params.endDate = today.toISOString().split("T")[0];
+          break;
+        case "yesterday":
+          const yesterday = new Date(today.setDate(today.getDate() - 1));
+          params.startDate = yesterday.toISOString().split("T")[0];
+          params.endDate = yesterday.toISOString().split("T")[0];
+          break;
+        default:
+          break;
+      }
+    } else {
+      // If the user has selected a start date or end date manually,
+      // make sure to set them in the params for the request
+      params.startDate = startDate;
+      params.endDate = endDate;
+    }
+
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/admin/expenses`, { params });
+      setExpenses(response.data.data);
+      setTotalPages(response.data.totalPages);
+      setTotalAmountSpent(response.data.totalAmountSpent);
+    } catch (error) {
+      console.error("Error fetching expenses:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
-    const fetchExpenses = async () => {
-      const params = {
-        page: currentPage,
-        limit,
-        createdBy: userId,
-        ...(category && { category }), // Add category if present
-        ...(startDate && { startDate }),
-        ...(endDate && { endDate }),
-      };
-
-      try {
-        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/admin/expenses`, { params });
-        setExpenses(response.data.data);
-        setTotalPages(response.data.totalPages);
-        setTotalAmountSpent(response.data.totalAmountSpent);
-      } catch (error) {
-        console.error("Error fetching expenses:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchExpenses();
   }, [category, selectedFilter, startDate, endDate, userId, currentPage]);
 
   const handleFilterClick = (filter) => {
     setSelectedFilter(filter);
     setCurrentPage(1); // Reset to first page on filter change
+
+    const today = new Date();
+
+    switch (filter) {
+      case "thisMonth":
+        setStartDate(new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split("T")[0]);
+        setEndDate(today.toISOString().split("T")[0]);
+        break;
+      case "lastMonth":
+        const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1);
+        setStartDate(new Date(lastMonth.getFullYear(), lastMonth.getMonth(), 1).toISOString().split("T")[0]);
+        setEndDate(new Date(lastMonth.getFullYear(), lastMonth.getMonth() + 1, 0).toISOString().split("T")[0]);
+        break;
+      case "thisWeek":
+        const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
+        setStartDate(startOfWeek.toISOString().split("T")[0]);
+        setEndDate(today.toISOString().split("T")[0]);
+        break;
+      case "lastWeek":
+        const lastWeekStart = new Date(today.setDate(today.getDate() - today.getDay() - 7));
+        setStartDate(lastWeekStart.toISOString().split("T")[0]);
+        setEndDate(new Date(today.setDate(today.getDate() - today.getDay() - 1)).toISOString().split("T")[0]);
+        break;
+      case "today":
+        setStartDate(today.toISOString().split("T")[0]);
+        setEndDate(today.toISOString().split("T")[0]);
+        break;
+      case "yesterday":
+        const yesterday = new Date(today.setDate(today.getDate() - 1));
+        setStartDate(yesterday.toISOString().split("T")[0]);
+        setEndDate(yesterday.toISOString().split("T")[0]);
+        break;
+      default:
+        setStartDate("");
+        setEndDate("");
+        break;
+    }
   };
 
   const goToViewExpense = (id) => {
@@ -194,10 +267,8 @@ function Tables() {
               {/* Display total amount spent below the title */}
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <h5 className="text-left">
-                  <span>Total Amount Spent:</span>
-                  <span style={{ fontSize: "20px", fontWeight: "bold", color: "#ff8d72", marginLeft: "5px" }}>
-                    ₹ {totalAmountSpent.toFixed(2)} {/* Display total amount */}
-                  </span>
+                  <span>Total Amount Spent: </span>
+                  <span className="text-success">{totalAmountSpent.toFixed(2)}</span>
                 </h5>
               </div>
               {loading ? (
@@ -229,7 +300,7 @@ function Tables() {
                             {categoryMap[expense.category]}
                           </span>
                         </td>
-                        <td>{new Date(expense.createdAt).toLocaleDateString()}</td>
+                        <td>{new Date(expense.paidOn).toLocaleDateString()}</td>
                         <td>
                           <Button color="info" size="sm" onClick={() => goToViewExpense(expense._id)}>
                             <FaEye />
