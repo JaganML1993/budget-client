@@ -300,7 +300,7 @@ const Dashboard = () => {
               <h6 style={{ color: '#FFB3BA', fontWeight: 300 }}>
                 Total Paid: <span style={{ color: '#00f2c3' }}>{totalPaidAmount}</span>
                 &nbsp;&nbsp;|&nbsp;&nbsp;
-                Total Pending: <span style={{ color: '#FFB3BA' }}>{totalPendingAmount}</span>
+                Total Pending: <span style={{ color: '#00f2c3' }}>{totalPendingAmount}</span>
               </h6>
             </CardHeader>
             <CardBody>
