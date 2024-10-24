@@ -138,39 +138,29 @@ function Tables() {
                             {commitment.payFor}
                           </Link>
                         </td>
-                        <td >{commitment.totalEmi?.$numberDecimal || commitment.totalEmi}</td>
-                        <td style={{ background: '#3CB371' }}>{commitment.paid?.$numberDecimal || commitment.paid}</td>
-                        <td style={{ background: '#CD5C5C' }}>{commitment.pending?.$numberDecimal || commitment.pending}</td>
+                        <td>{commitment.totalEmi?.$numberDecimal || commitment.totalEmi}</td>
+                        <td>{commitment.paid?.$numberDecimal || commitment.paid}</td>
+                        <td>{commitment.pending?.$numberDecimal || commitment.pending}</td>
                         <td>₹ {commitment.emiAmount?.$numberDecimal || commitment.emiAmount}</td>
-                        <td style={{ background: '#3CB371' }}>₹ {commitment.paidAmount?.$numberDecimal || commitment.paidAmount}</td>
-                        <td style={{ background: '#CD5C5C' }}>₹ {commitment.balanceAmount?.$numberDecimal || commitment.balanceAmount}</td>
+                        <td>₹ {commitment.paidAmount?.$numberDecimal || commitment.paidAmount}</td>
+                        <td>₹ {commitment.balanceAmount?.$numberDecimal || commitment.balanceAmount}</td>
                         <td>{getPayType(commitment.payType)}</td>
                         <td>{getCategory(commitment.category)}</td>
                         <td>{getStatus(commitment.status)}</td>
                         <td>
-                          <Button
-                            color="info"
-                            size="sm"
-                            onClick={() => goToViewCommitment(commitment._id)}
-                          >
+                          <Button color="info" size="sm" onClick={() => goToViewCommitment(commitment._id)}>
                             <FaEye />
                           </Button>
-                          <Button
-                            color="warning"
-                            size="sm"
-                            onClick={() => goToEditCommitment(commitment._id)}
-                          >
+                          <Button color="warning" size="sm" onClick={() => goToEditCommitment(commitment._id)}>
                             <FaEdit />
                           </Button>
-                          <Button
-                            color="danger"
-                            size="sm"
-                            onClick={() => handleDeleteClick(commitment._id)}
-                          >
+                          <Button color="danger" size="sm" onClick={() => handleDeleteClick(commitment._id)}>
                             <FaTrash />
                           </Button>
                         </td>
                       </tr>
+
+
                     ))}
                   </tbody>
                 </Table>

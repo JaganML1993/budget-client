@@ -54,6 +54,7 @@ function Tables() {
   };
 
   const fetchExpenses = async () => {
+    setLoading(true); // Set loading to true when fetching data
     const params = {
       page: currentPage,
       limit,
@@ -114,8 +115,9 @@ function Tables() {
       setTotalAmountSpent(response.data.totalAmountSpent);
     } catch (error) {
       console.error("Error fetching expenses:", error);
+      toast.error("Failed to fetch expenses."); // Show toast on error
     } finally {
-      setLoading(false);
+      setLoading(false); // Set loading to false when fetch completes
     }
   };
 
@@ -163,6 +165,8 @@ function Tables() {
         setEndDate("");
         break;
     }
+
+    fetchExpenses(); // Fetch expenses immediately after setting filters
   };
 
   const goToViewExpense = (id) => {
@@ -190,12 +194,19 @@ function Tables() {
       setExpenses((prevExpenses) => prevExpenses.filter(expense => expense._id !== id));
     } catch (error) {
       console.error("Error deleting expense:", error);
+      toast.error("Failed to delete expense."); // Show toast on error
     }
   };
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
+
+  const formatInRupees = (amount) => amount.toLocaleString('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    minimumFractionDigits: 2
+  });
 
   return (
     <div className="content">
@@ -268,7 +279,7 @@ function Tables() {
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <h5 className="text-left">
                   <span>Total Amount Spent: </span>
-                  <span className="text-success">{totalAmountSpent.toFixed(2)}</span>
+                  <span className="text-success">{formatInRupees(totalAmountSpent)}</span>
                 </h5>
               </div>
               {loading ? (
@@ -292,15 +303,20 @@ function Tables() {
                         <td>{expense.name}</td>
                         <td className="text-center">
                           {typeof expense.amount === 'object'
-                            ? parseFloat(expense.amount.$numberDecimal).toFixed(2)
-                            : parseFloat(expense.amount)?.toFixed(2) || '0.00'}
+                            ? formatInRupees(parseFloat(expense.amount.$numberDecimal))
+                            : formatInRupees(parseFloat(expense.amount)) || '0.00'}
                         </td>
                         <td>
                           <span className={`badge badge-${categoryBadgeMap[expense.category]}`}>
                             {categoryMap[expense.category]}
                           </span>
                         </td>
-                        <td>{new Date(expense.paidOn).toLocaleDateString()}</td>
+                        <td>{new Date(expense.paidOn).toLocaleDateString('en-GB', {
+                          day: '2-digit',
+                          month: '2-digit',
+                          year: 'numeric',
+                        })}</td>
+
                         <td>
                           <Button color="info" size="sm" onClick={() => goToViewExpense(expense._id)}>
                             <FaEye />

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Line, Bar } from 'react-chartjs-2';
+import { Doughnut, Bar } from 'react-chartjs-2';
 import 'chartjs-plugin-datalabels';
 import {
   Card,
@@ -33,19 +33,18 @@ const Dashboard = () => {
     7: "Savings",
   };
 
-  // Set default dates to the current month and fetch data
   const setDefaultDates = () => {
     const now = new Date();
     const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
     const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
 
-    setStartDate(firstDayOfMonth.toISOString().slice(0, 10)); // YYYY-MM-DD
-    setEndDate(lastDayOfMonth.toISOString().slice(0, 10)); // YYYY-MM-DD
+    setStartDate(firstDayOfMonth.toISOString().slice(0, 10));
+    setEndDate(lastDayOfMonth.toISOString().slice(0, 10));
   };
 
   useEffect(() => {
     setDefaultDates();
-    fetchMonthlyData(); // Fetch data on component mount
+    fetchMonthlyData();
   }, []);
 
   const fetchMonthlyData = async () => {
@@ -58,19 +57,18 @@ const Dashboard = () => {
 
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/admin/dashboard/index`, {
-        params: { userId, startDate, endDate } // Include dates in the request
+        params: { userId, startDate, endDate }
       });
 
       setDailyTotals(response.data.dailyTotals);
       setMonthlyCategoryExpenses(response.data.monthlyCategoryExpenses);
       setCommitmentsData(response.data.commitments);
-      setMonthlyTotals(response.data.monthlyTotals); // Set monthly totals
+      setMonthlyTotals(response.data.monthlyTotals);
     } catch (error) {
       console.error("Error fetching monthly data:", error);
     }
   };
 
-  // Call fetchMonthlyData only when the search button is clicked
   const handleSearch = () => {
     fetchMonthlyData();
   };
@@ -98,40 +96,45 @@ const Dashboard = () => {
     },
   };
 
-  const chartData = {
+  // Format in Indian Rupees
+  const formatInRupees = (amount) => amount.toLocaleString('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    minimumFractionDigits: 2
+  });
+
+  // Area chart data for daily totals
+  const areaChartData = {
     labels: Array.from({ length: dailyTotals.length }, (_, i) => i + 1),
     datasets: [
       {
-        label: "Monthly Expenses",
+        label: "Daily Expenses",
         fill: true,
-        backgroundColor: "rgba(29,140,248,0.2)",
+        backgroundColor: "rgba(29,140,248,0.4)", // Gradient fill
         borderColor: "rgba(75, 192, 192, 1)",
         borderWidth: 0.5,
         data: dailyTotals.map(amount => parseFloat(amount)),
-        tension: 0.4,
       },
     ],
   };
 
-  const barColors = [
-    'rgba(255, 99, 132, 0.6)',
-    'rgba(54, 162, 235, 0.6)',
-    'rgba(255, 206, 86, 0.6)',
-    'rgba(75, 192, 192, 0.6)',
-    'rgba(153, 102, 255, 0.6)',
-    'rgba(255, 159, 64, 0.6)',
-    'rgba(255, 205, 86, 0.6)',
-  ];
-
-  const barChartData = {
+  const pieChartData = {
     labels: monthlyCategoryExpenses.map(expense => categoryMap[expense._id]),
     datasets: [
       {
         label: 'Expenses by Category',
         data: monthlyCategoryExpenses.map(expense => expense.totalAmount),
-        backgroundColor: monthlyCategoryExpenses.map((_, index) => barColors[index % barColors.length]),
-        borderColor: monthlyCategoryExpenses.map((_, index) => barColors[index % barColors.length].replace('0.6', '1')),
-        borderWidth: 0,
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.6)',
+          'rgba(54, 162, 235, 0.6)',
+          'rgba(255, 206, 86, 0.6)',
+          'rgba(75, 192, 192, 0.6)',
+          'rgba(153, 102, 255, 0.6)',
+          'rgba(255, 159, 64, 0.6)',
+          'rgba(255, 205, 86, 0.6)',
+        ],
+        borderColor: 'rgba(0, 0, 0, 0)', // Set border color to transparent
+        borderWidth: 0, // Remove the border
       },
     ],
   };
@@ -142,7 +145,6 @@ const Dashboard = () => {
 
   const mostSpentCategoryLabel = categoryMap[mostSpentCategory._id] || '-';
 
-  // Prepare stacked bar chart data from commitments
   const stackedBarChartData = {
     labels: commitmentsData.map(commitment => commitment.payFor),
     datasets: [
@@ -173,9 +175,8 @@ const Dashboard = () => {
     },
   };
 
-  // Add a line chart for monthly total expenses
   const monthlyChartData = {
-    labels: Array.from({ length: 12 }, (_, i) => new Date(0, i).toLocaleString('default', { month: 'long' })), // Month names
+    labels: Array.from({ length: 12 }, (_, i) => new Date(0, i).toLocaleString('default', { month: 'long' })),
     datasets: [
       {
         label: "Monthly Total Expenses",
@@ -214,10 +215,16 @@ const Dashboard = () => {
           return colors[index % colors.length];
         }),
         borderWidth: 0,
-        data: monthlyTotals.map(amount => parseFloat(amount)), // Monthly totals data
+        data: monthlyTotals.map(amount => parseFloat(amount)),
       },
     ],
   };
+
+  const totalPaidAmountBefore = commitmentsData.reduce((total, commitment) => total + parseFloat(commitment.totalPaid), 0);
+  const totalPendingAmountBefore = commitmentsData.reduce((total, commitment) => total + parseFloat(commitment.totalPending), 0);
+
+  const totalPaidAmount = formatInRupees(totalPaidAmountBefore);
+  const totalPendingAmount = formatInRupees(totalPendingAmountBefore);
 
   return (
     <div className="content">
@@ -228,6 +235,7 @@ const Dashboard = () => {
             <CardHeader>
               <h5 className="card-category">Date Range Filter</h5>
               <div className="d-flex flex-wrap" style={{ alignItems: 'center' }}>
+                {/* Date Inputs */}
                 <FormGroup className="mr-2 mb-2" style={{ flex: '1 0 30%' }}>
                   <Label for="startDate">Start Date</Label>
                   <Input
@@ -252,34 +260,18 @@ const Dashboard = () => {
           </Card>
         </Col>
       </Row>
-      {/* Charts */}
       <Row>
-        <Col lg="6">
+        <Col lg="12">
           <Card className="card-chart">
             <CardHeader>
-              <h5 className="card-category">Daily Expenses Overview</h5>
-              <CardTitle tag="h4">
-                Total Monthly Spending - ₹{(dailyTotals.reduce((a, b) => a + b, 0) || 0).toFixed(2)}
-              </CardTitle>
+              <CardTitle tag="h4">Daily Expenses Overview</CardTitle>
+              <h6 style={{ color: '#FFB3BA', fontWeight: 300 }}>
+                Total Monthly Spending - <span style={{ color: '#00f2c3' }}>{formatInRupees(dailyTotals.reduce((a, b) => a + b, 0) || 0)}</span>
+              </h6>
             </CardHeader>
             <CardBody>
-              <div className="chart-area">
-                <Line data={chartData} options={chartOptions} />
-              </div>
-            </CardBody>
-          </Card>
-        </Col>
-        <Col lg="6">
-          <Card className="card-chart">
-            <CardHeader>
-              <h5 className="card-category">Spending by Category</h5>
-              <CardTitle tag="h4">
-                Most Spending Category: {mostSpentCategoryLabel} - ₹{mostSpentCategory.totalAmount || 0}
-              </CardTitle>
-            </CardHeader>
-            <CardBody>
-              <div className="chart-area">
-                <Bar data={barChartData} options={chartOptions} />
+              <div style={{ height: '300px' }}>
+                <Bar data={areaChartData} options={chartOptions} />
               </div>
             </CardBody>
           </Card>
@@ -289,11 +281,14 @@ const Dashboard = () => {
         <Col lg="6">
           <Card className="card-chart">
             <CardHeader>
-              <h5 className="card-category">Commitments: Paid & Pending</h5>
+              <CardTitle tag="h4">Spending by Category</CardTitle>
+              <h6 style={{ color: '#FFB3BA', fontWeight: 300 }}>
+                Most Spending Category: <span style={{ color: '#00f2c3' }}>{mostSpentCategoryLabel}</span> - <span style={{ color: '#00f2c3' }}>{formatInRupees(mostSpentCategory.totalAmount) || 0}</span>
+              </h6>
             </CardHeader>
             <CardBody>
-              <div className="chart-area">
-                <Bar data={stackedBarChartData} options={stackedBarChartOptions} />
+              <div style={{ height: '300px' }}>
+                <Doughnut data={pieChartData} options={chartOptions} />
               </div>
             </CardBody>
           </Card>
@@ -301,10 +296,30 @@ const Dashboard = () => {
         <Col lg="6">
           <Card className="card-chart">
             <CardHeader>
-              <h5 className="card-category">Monthly Total Expenses</h5>
+              <CardTitle tag="h4">Commitments: Paid & Pending</CardTitle>
+              <h6 style={{ color: '#FFB3BA', fontWeight: 300 }}>
+                Total Paid: <span style={{ color: '#00f2c3' }}>{totalPaidAmount}</span>
+                &nbsp;&nbsp;|&nbsp;&nbsp;
+                Total Pending: <span style={{ color: '#FFB3BA' }}>{totalPendingAmount}</span>
+              </h6>
             </CardHeader>
             <CardBody>
-              <div className="chart-area">
+              <div style={{ height: '300px' }}>
+                <Bar data={stackedBarChartData} options={stackedBarChartOptions} />
+              </div>
+            </CardBody>
+          </Card>
+        </Col>
+
+      </Row>
+      <Row>
+        <Col lg="12">
+          <Card className="card-chart">
+            <CardHeader>
+              <CardTitle tag="h4">Monthly Total Expenses</CardTitle>
+            </CardHeader>
+            <CardBody>
+              <div style={{ height: '300px' }}>
                 <Bar data={monthlyChartData} options={chartOptions} />
               </div>
             </CardBody>
