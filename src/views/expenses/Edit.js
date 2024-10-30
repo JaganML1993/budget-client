@@ -186,6 +186,7 @@ function EditExpense() {
                           <option value="4">Cash</option>
                           <option value="7">Savings</option>
                           <option value="5">Others</option>
+                          <option value="8">Interest Paid</option>
                         </Input>
                       </FormGroup>
                     </Col>

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Doughnut, Bar } from 'react-chartjs-2';
 import 'chartjs-plugin-datalabels';
+import { FaSearch } from 'react-icons/fa';
 import {
   Card,
   CardHeader,
@@ -254,7 +255,7 @@ const Dashboard = () => {
                     onChange={(e) => setEndDate(e.target.value)}
                   />
                 </FormGroup>
-                <Button color="primary" size="sm" className='mt-3' onClick={handleSearch}>Search</Button>
+                <Button color="primary" size="sm" className='mt-3' onClick={handleSearch}><FaSearch /></Button>
               </div>
             </CardHeader>
           </Card>

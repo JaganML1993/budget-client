@@ -24,9 +24,8 @@ function Tables() {
   const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [category, setCategory] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [selectedFilter, setSelectedFilter] = useState("thisMonth");
+  const [startDate, setStartDate] = useState(new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split("T")[0]);
+  const [endDate, setEndDate] = useState(new Date().toISOString().split("T")[0]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const { userId } = useAuth();
@@ -39,8 +38,9 @@ function Tables() {
     3: "danger",
     4: "info",
     5: "secondary",
-    6: "success",
+    6: "warning",
     7: "success",
+    8: "danger",
   };
 
   const categoryMap = {
@@ -51,6 +51,7 @@ function Tables() {
     5: "Others",
     6: "Bill Payment",
     7: "Savings",
+    8: "Interest Paid",
   };
 
   const fetchExpenses = async () => {
@@ -60,53 +61,9 @@ function Tables() {
       limit,
       createdBy: userId,
       ...(category && { category }),
-      ...(startDate && { startDate }),
-      ...(endDate && { endDate }),
+      startDate,
+      endDate,
     };
-
-    const today = new Date();
-
-    // Set the start and end date based on the selected filter if dates are not set
-    if (!startDate || !endDate) {
-      switch (selectedFilter) {
-        case "thisMonth":
-          const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-          params.startDate = startOfMonth.toISOString().split("T")[0];
-          params.endDate = today.toISOString().split("T")[0];
-          break;
-        case "lastMonth":
-          const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1);
-          params.startDate = new Date(lastMonth.getFullYear(), lastMonth.getMonth(), 1).toISOString().split("T")[0];
-          params.endDate = new Date(lastMonth.getFullYear(), lastMonth.getMonth() + 1, 0).toISOString().split("T")[0];
-          break;
-        case "thisWeek":
-          const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
-          params.startDate = startOfWeek.toISOString().split("T")[0];
-          params.endDate = today.toISOString().split("T")[0];
-          break;
-        case "lastWeek":
-          const lastWeekStart = new Date(today.setDate(today.getDate() - today.getDay() - 7));
-          params.startDate = lastWeekStart.toISOString().split("T")[0];
-          params.endDate = new Date(today.setDate(today.getDate() - today.getDay() - 1)).toISOString().split("T")[0];
-          break;
-        case "today":
-          params.startDate = today.toISOString().split("T")[0];
-          params.endDate = today.toISOString().split("T")[0];
-          break;
-        case "yesterday":
-          const yesterday = new Date(today.setDate(today.getDate() - 1));
-          params.startDate = yesterday.toISOString().split("T")[0];
-          params.endDate = yesterday.toISOString().split("T")[0];
-          break;
-        default:
-          break;
-      }
-    } else {
-      // If the user has selected a start date or end date manually,
-      // make sure to set them in the params for the request
-      params.startDate = startDate;
-      params.endDate = endDate;
-    }
 
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/admin/expenses`, { params });
@@ -123,51 +80,7 @@ function Tables() {
 
   useEffect(() => {
     fetchExpenses();
-  }, [category, selectedFilter, startDate, endDate, userId, currentPage]);
-
-  const handleFilterClick = (filter) => {
-    setSelectedFilter(filter);
-    setCurrentPage(1); // Reset to first page on filter change
-
-    const today = new Date();
-
-    switch (filter) {
-      case "thisMonth":
-        setStartDate(new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split("T")[0]);
-        setEndDate(today.toISOString().split("T")[0]);
-        break;
-      case "lastMonth":
-        const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1);
-        setStartDate(new Date(lastMonth.getFullYear(), lastMonth.getMonth(), 1).toISOString().split("T")[0]);
-        setEndDate(new Date(lastMonth.getFullYear(), lastMonth.getMonth() + 1, 0).toISOString().split("T")[0]);
-        break;
-      case "thisWeek":
-        const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
-        setStartDate(startOfWeek.toISOString().split("T")[0]);
-        setEndDate(today.toISOString().split("T")[0]);
-        break;
-      case "lastWeek":
-        const lastWeekStart = new Date(today.setDate(today.getDate() - today.getDay() - 7));
-        setStartDate(lastWeekStart.toISOString().split("T")[0]);
-        setEndDate(new Date(today.setDate(today.getDate() - today.getDay() - 1)).toISOString().split("T")[0]);
-        break;
-      case "today":
-        setStartDate(today.toISOString().split("T")[0]);
-        setEndDate(today.toISOString().split("T")[0]);
-        break;
-      case "yesterday":
-        const yesterday = new Date(today.setDate(today.getDate() - 1));
-        setStartDate(yesterday.toISOString().split("T")[0]);
-        setEndDate(yesterday.toISOString().split("T")[0]);
-        break;
-      default:
-        setStartDate("");
-        setEndDate("");
-        break;
-    }
-
-    fetchExpenses(); // Fetch expenses immediately after setting filters
-  };
+  }, [category, startDate, endDate, userId, currentPage]);
 
   const goToViewExpense = (id) => {
     navigate(`/admin/expenses/view/${id}`);
@@ -238,6 +151,7 @@ function Tables() {
                     <option value="5">Others</option>
                     <option value="6">Bill Payment</option>
                     <option value="7">Savings</option>
+                    <option value="8">Interest Paid</option>
                   </Input>
                 </Col>
                 <Col md="4">
@@ -258,21 +172,6 @@ function Tables() {
                     onChange={(e) => setEndDate(e.target.value)}
                   />
                 </Col>
-              </Row>
-
-              {/* Time filter buttons */}
-              <Row className="mb-3">
-                {["thisMonth", "lastMonth", "thisWeek", "lastWeek", "today", "yesterday"].map((filter) => (
-                  <Col key={filter} md="2" className="mb-2">
-                    <Button
-                      color={selectedFilter === filter ? "primary" : "secondary"}
-                      onClick={() => handleFilterClick(filter)}
-                      style={{ width: "100%", fontSize: "small", padding: "5px 10px" }}
-                    >
-                      {filter.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase())}
-                    </Button>
-                  </Col>
-                ))}
               </Row>
 
               {/* Display total amount spent below the title */}
@@ -366,7 +265,7 @@ function Tables() {
                     size="sm"
                     onClick={() => handlePageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
-                    className="ms-2"
+                    className="me-2"
                   >
                     <FaChevronRight />
                   </Button>
@@ -374,7 +273,7 @@ function Tables() {
                     size="sm"
                     onClick={() => handlePageChange(totalPages)} // Go to last page
                     disabled={currentPage === totalPages}
-                    className="ms-2"
+                    className="me-2"
                   >
                     <FaChevronRight /><FaChevronRight />
                   </Button>

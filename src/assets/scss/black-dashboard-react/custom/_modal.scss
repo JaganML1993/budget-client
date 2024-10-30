@@ -3,17 +3,20 @@
 // --------------------------------------------------
 .modal-content {
   border: 0;
+  color: $white;
 
   // Modal header
   // Top section of the modal w/ title and dismiss
 
   .modal-header {
     border-bottom: none;
+    background: $card-black-background;
+    color: $white;
 
     & button {
         position: absolute;
         right: 27px;
-        top: 24px;
+        top: 15px;
         outline: 0;
         padding: 1rem;
         margin: -1rem -1rem -1rem auto;
@@ -21,11 +24,13 @@
     .title{
         color: $black;
         margin-top: 5px;
-        margin-bottom: 0;
+      
     }
 
     .modal-title{
       color: $black;
+      margin-bottom: 10px;
+      color: $white;
     }
 
     i.tim-icons {
@@ -38,7 +43,7 @@
   // Where all modal content resides (sibling of .modal-header and .modal-footer)
   .modal-body {
     line-height: 1.9;
-
+    background: $card-black-background;
     p{
       color: $black;
     }
@@ -46,6 +51,7 @@
   // Footer (for actions)
   .modal-footer {
     border-top: 0;
+    background: $card-black-background;
     -webkit-justify-content: space-between; /* Safari 6.1+ */
     justify-content: space-between;
 
@@ -53,6 +59,7 @@
       margin: 0;
       padding-left: 16px;
       padding-right: 16px;
+      margin:20px;
       width: auto;
 
       &.pull-left {
@@ -65,7 +72,7 @@
 
   }
   .modal-body + .modal-footer {
-    padding-top: 0;
+    padding: 20 !important;
   }
 }
 .modal-backdrop {
@@ -73,7 +80,7 @@
 }
 
 .modal{
-
+  
     &.modal-default{
         @include modal-colors($white, $black);
     }
@@ -145,7 +152,8 @@
   }
   .modal-content{
     .modal-header{
-      padding: 24px;
+      padding: 24px  24px  24px  24px !important;
+      
     }
   }
 

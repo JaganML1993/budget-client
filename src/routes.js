@@ -11,6 +11,7 @@ import CommitmentsView from "views/commitments/View.js";
 import CommitmentsEdit from "views/commitments/Edit.js";
 import CommitmentsHistory from "views/history/List.js";
 import CommitmentsHistoryCreate from "views/history/Create.js";
+import Notes from "views/Notes.js";
 import CommitmentsHistoryEdit from "views/history/Edit.js";
 import Logout from "views/auth/Logout.js"; // Import Logout component
 import ProtectedRoute from "../src/components/ProtectedRoute"; // Import ProtectedRoute
@@ -82,7 +83,7 @@ var routes = [
   {
     path: "/commitments",
     name: "Commitments",
-    icon: "tim-icons icon-notes", // Notes icon for commitments
+    icon: "tim-icons icon-coins",
     component: (
       <ProtectedRoute>
         <Commitments />
@@ -140,6 +141,17 @@ var routes = [
     component: (
       <ProtectedRoute>
         <CommitmentsHistoryEdit />
+      </ProtectedRoute>
+    ),
+    layout: "/admin",
+  },
+  {
+    path: "/notes",
+    name: "Notes",
+    icon: "tim-icons icon-single-copy-04", // Document icon for notes
+    component: (
+      <ProtectedRoute>
+        <Notes />
       </ProtectedRoute>
     ),
     layout: "/admin",
