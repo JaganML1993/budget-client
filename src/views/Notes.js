@@ -138,7 +138,7 @@ function Notes() {
                         <Row>
                             {filteredNotes.map((note) => (
                                 <Col md="4" key={note._id}>
-                                    <Card>
+                                    <Card  style={{ marginBottom: '10px' }}>
                                         <CardBody>
                                             <button
                                                 onClick={() => deleteNote(note._id)}
@@ -149,7 +149,7 @@ function Notes() {
                                                     background: 'none',
                                                     border: 'none',
                                                     cursor: 'pointer',
-                                                    color: '#e14eca',
+                                                    color: '#f3a4b5',
                                                 }}
                                             >
                                                 <i className="fa fa-trash" aria-hidden="true"></i>
@@ -181,7 +181,7 @@ function Notes() {
                                                     style={{
                                                         border: "none",
                                                         outline: "none",
-                                                        minHeight: "150px",
+                                                        minHeight: "80px",
                                                         maxHeight: "400px",
                                                         resize: "none",
                                                     }}
@@ -211,8 +211,8 @@ function Notes() {
             <Button
                 style={{
                     position: 'fixed',
-                    bottom: '20px',
-                    right: '20px',
+                    bottom: '30px',
+                    right: '30px',
                     width: '40px',
                     height: '40px',
                     borderRadius: '50%',
@@ -220,9 +220,10 @@ function Notes() {
                     justifyContent: 'center',
                     alignItems: 'center',
                     padding: '0',
+                    color: '#f3a4b5'
                 }}
                 size="sm"
-                color="primary"
+                // color="primary"
                 onClick={toggleModal}
             >
                 <i className="fa fa-plus" aria-hidden="true" style={{ fontSize: '20px' }}></i>
