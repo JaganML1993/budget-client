@@ -29,6 +29,7 @@ function Notes() {
         attachment: null,
     });
     const [modalOpen, setModalOpen] = useState(false); // State for modal visibility
+    const [searchQuery, setSearchQuery] = useState(""); // State for search query
 
     const fetchNotes = async () => {
         try {
@@ -114,13 +115,28 @@ function Notes() {
         }
     };
 
+    // Filter notes based on search query
+    const filteredNotes = notes.filter(note =>
+        note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        note.content.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
     return (
         <>
             <div className="content">
                 <Row>
                     <Col md="12" lg="12">
+                        {/* Search Input */}
+                        <FormGroup>
+                            <Input
+                                type="text"
+                                placeholder="Search by title or content"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                        </FormGroup>
                         <Row>
-                            {notes.map((note) => (
+                            {filteredNotes.map((note) => (
                                 <Col md="4" key={note._id}>
                                     <Card>
                                         <CardBody>
@@ -146,8 +162,7 @@ function Notes() {
                                                     handleNoteChange(note._id, "title", e.target.value)
                                                 }
                                                 style={{
-                                                    fontSize: "1.0rem",
-                                                    // fontWeight: "bold",
+                                                    fontSize: "0.9rem",
                                                     color: "#11cdef",
                                                     border: "none",
                                                     outline: "none",
@@ -166,12 +181,12 @@ function Notes() {
                                                     style={{
                                                         border: "none",
                                                         outline: "none",
-                                                        overflowY: "auto",
-                                                        resize: "vertical",
+                                                        minHeight: "60px",
+                                                        maxHeight: "300px",
+                                                        resize: "none",
                                                     }}
                                                 />
                                             </FormGroup>
-
 
                                             {note.attachment && (
                                                 <img
@@ -210,7 +225,7 @@ function Notes() {
                 color="primary"
                 onClick={toggleModal}
             >
-                <i className="fa fa-plus" aria-hidden="true" style={{ fontSize: '20px' }}></i> {/* Optional: Adjust icon size */}
+                <i className="fa fa-plus" aria-hidden="true" style={{ fontSize: '20px' }}></i>
             </Button>
 
             {/* Modal for adding new note */}
