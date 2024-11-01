@@ -119,77 +119,76 @@ function Notes() {
             <div className="content">
                 <Row>
                     <Col md="12" lg="12">
-                        <Card>
-                            <CardBody>
-                                <Row>
-                                    {notes.map((note) => (
-                                        <Col md="4" key={note._id} style={{ marginBottom: "-10px" }}>
-                                            <Card>
-                                                <CardBody>
-                                                    <button
-                                                        onClick={() => deleteNote(note._id)}
-                                                        style={{
-                                                            position: 'absolute',
-                                                            top: '10px',
-                                                            right: '10px',
-                                                            background: 'none',
-                                                            border: 'none',
-                                                            cursor: 'pointer',
-                                                            color: '#e14eca',
-                                                        }}
-                                                    >
-                                                        <i className="fa fa-trash" aria-hidden="true"></i>
-                                                    </button>
+                        <Row>
+                            {notes.map((note) => (
+                                <Col md="4" key={note._id}>
+                                    <Card>
+                                        <CardBody>
+                                            <button
+                                                onClick={() => deleteNote(note._id)}
+                                                style={{
+                                                    position: 'absolute',
+                                                    top: '10px',
+                                                    right: '10px',
+                                                    background: 'none',
+                                                    border: 'none',
+                                                    cursor: 'pointer',
+                                                    color: '#e14eca',
+                                                }}
+                                            >
+                                                <i className="fa fa-trash" aria-hidden="true"></i>
+                                            </button>
 
-                                                    <Input
-                                                        type="text"
-                                                        value={note.title}
-                                                        onChange={(e) =>
-                                                            handleNoteChange(note._id, "title", e.target.value)
-                                                        }
-                                                        style={{
-                                                            fontSize: "1.0rem",
-                                                            fontWeight: "bold",
-                                                            border: "none",
-                                                            outline: "none",
-                                                        }}
-                                                    />
+                                            <Input
+                                                type="text"
+                                                value={note.title}
+                                                onChange={(e) =>
+                                                    handleNoteChange(note._id, "title", e.target.value)
+                                                }
+                                                style={{
+                                                    fontSize: "1.0rem",
+                                                    // fontWeight: "bold",
+                                                    color: "#11cdef",
+                                                    border: "none",
+                                                    outline: "none",
+                                                }}
+                                            />
 
-                                                    <FormGroup>
-                                                        <Input
-                                                            id="content"
-                                                            name="content"
-                                                            type="textarea"
-                                                            rows="3"
-                                                            value={note.content}
-                                                            onChange={(e) =>
-                                                                handleNoteChange(note._id, "content", e.target.value)
-                                                            }
-                                                            style={{
-                                                                border: "none",
-                                                                outline: "none",
-                                                            }}
-                                                        />
-                                                    </FormGroup>
+                                            <FormGroup>
+                                                <Input
+                                                    id="content"
+                                                    name="content"
+                                                    type="textarea"
+                                                    value={note.content}
+                                                    onChange={(e) =>
+                                                        handleNoteChange(note._id, "content", e.target.value)
+                                                    }
+                                                    style={{
+                                                        border: "none",
+                                                        outline: "none",
+                                                        overflowY: "auto",
+                                                        resize: "vertical",
+                                                    }}
+                                                />
+                                            </FormGroup>
 
-                                                    {note.attachment && (
-                                                        <img
-                                                            src={`${process.env.REACT_APP_API_BASE_URL}/uploads/${note.attachment}`}
-                                                            alt="attachment"
-                                                            style={{
-                                                                width: "100%",
-                                                                marginTop: "10px",
-                                                                borderRadius: "8px",
-                                                            }}
-                                                        />
-                                                    )}
-                                                </CardBody>
-                                            </Card>
-                                        </Col>
-                                    ))}
-                                </Row>
-                            </CardBody>
-                        </Card>
+
+                                            {note.attachment && (
+                                                <img
+                                                    src={`${process.env.REACT_APP_API_BASE_URL}/uploads/${note.attachment}`}
+                                                    alt="attachment"
+                                                    style={{
+                                                        width: "100%",
+                                                        marginTop: "10px",
+                                                        borderRadius: "8px",
+                                                    }}
+                                                />
+                                            )}
+                                        </CardBody>
+                                    </Card>
+                                </Col>
+                            ))}
+                        </Row>
                     </Col>
                 </Row>
             </div>
@@ -199,16 +198,19 @@ function Notes() {
                     position: 'fixed',
                     bottom: '20px',
                     right: '20px',
-                    padding: '15px',
-                    height: '45px',
+                    width: '40px',
+                    height: '40px',
                     borderRadius: '50%',
-                    
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    padding: '0',
                 }}
                 size="sm"
                 color="primary"
                 onClick={toggleModal}
             >
-                <i className="fa fa-plus" aria-hidden="true"></i>
+                <i className="fa fa-plus" aria-hidden="true" style={{ fontSize: '20px' }}></i> {/* Optional: Adjust icon size */}
             </Button>
 
             {/* Modal for adding new note */}
