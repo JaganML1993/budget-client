@@ -181,8 +181,8 @@ function Notes() {
                                                     style={{
                                                         border: "none",
                                                         outline: "none",
-                                                        minHeight: "60px",
-                                                        maxHeight: "300px",
+                                                        minHeight: "150px",
+                                                        maxHeight: "400px",
                                                         resize: "none",
                                                     }}
                                                 />
