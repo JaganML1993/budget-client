@@ -137,7 +137,7 @@ function Notes() {
         });
     }, [notes]);
 
-    const predefinedColors = ["#2E365A", "#6D2932", "#006A67", "#C96868", "#708871", "#605678"];
+    const predefinedColors = ["#27293d", "#6D2932", "#006A67", "#C96868", "#708871", "#605678"];
 
     return (
         <>
