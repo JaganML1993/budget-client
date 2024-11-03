@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import axios from "axios"; // Import Axios
-
+import axios from "axios";
 import {
     Button,
     Card,
@@ -28,16 +27,16 @@ function Notes() {
         content: "",
         attachment: null,
     });
-    const [modalOpen, setModalOpen] = useState(false); // State for modal visibility
-    const [searchQuery, setSearchQuery] = useState(""); // State for search query
+    const [modalOpen, setModalOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
 
     const fetchNotes = async () => {
         try {
             const response = await axios.get(
                 `${process.env.REACT_APP_API_BASE_URL}/admin/notes`, {
-                params: { userId } // Pass userId as a query parameter
+                params: { userId }
             });
-            setNotes(response.data.data); // Make sure to match the response structure
+            setNotes(response.data.data);
         } catch (error) {
             toast.error("Failed to fetch notes. Please try again.");
         }
@@ -102,6 +101,10 @@ function Notes() {
         }
     };
 
+    const handleColorChange = (id, color) => {
+        handleNoteChange(id, "color", color);
+    };
+
     const deleteNote = async (id) => {
         const confirmDelete = window.confirm("Are you sure you want to delete this note?");
         if (!confirmDelete) return;
@@ -121,6 +124,21 @@ function Notes() {
         note.content.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
+    const adjustTextareaHeight = (textarea) => {
+        if (textarea) {
+            textarea.style.height = `${textarea.scrollHeight}px`;
+        }
+    };
+
+    useEffect(() => {
+        notes.forEach((note) => {
+            const textarea = document.getElementById(`content-${note._id}`);
+            adjustTextareaHeight(textarea);
+        });
+    }, [notes]);
+
+    const predefinedColors = ["#2E365A", "#6D2932", "#006A67", "#C96868", "#708871", "#606676"];
+
     return (
         <>
             <div className="content">
@@ -138,22 +156,21 @@ function Notes() {
                         <Row>
                             {filteredNotes.map((note) => (
                                 <Col md="4" key={note._id}>
-                                    <Card  style={{ marginBottom: '10px' }}>
+                                    <Card style={{ marginBottom: "10px", backgroundColor: note.color || "#27293d" }}>
                                         <CardBody>
-                                            <button
-                                                onClick={() => deleteNote(note._id)}
-                                                style={{
-                                                    position: 'absolute',
-                                                    top: '10px',
-                                                    right: '10px',
-                                                    background: 'none',
-                                                    border: 'none',
-                                                    cursor: 'pointer',
-                                                    color: '#f3a4b5',
-                                                }}
-                                            >
-                                                <i className="fa fa-trash" aria-hidden="true"></i>
-                                            </button>
+                                            <div style={{ position: 'absolute', top: '10px', right: '10px' }}>
+                                                <button
+                                                    onClick={() => deleteNote(note._id)}
+                                                    style={{
+                                                        background: 'none',
+                                                        border: 'none',
+                                                        cursor: 'pointer',
+                                                        color: '#f3a4b5',
+                                                    }}
+                                                >
+                                                    <i className="fa fa-trash" aria-hidden="true"></i>
+                                                </button>
+                                            </div>
 
                                             <Input
                                                 type="text"
@@ -163,7 +180,7 @@ function Notes() {
                                                 }
                                                 style={{
                                                     fontSize: "0.9rem",
-                                                    color: "#11cdef",
+                                                    color: "#ffffff",
                                                     border: "none",
                                                     outline: "none",
                                                 }}
@@ -171,17 +188,17 @@ function Notes() {
 
                                             <FormGroup>
                                                 <Input
-                                                    id="content"
+                                                    id={`content-${note._id}`}
                                                     name="content"
                                                     type="textarea"
                                                     value={note.content}
                                                     onChange={(e) =>
                                                         handleNoteChange(note._id, "content", e.target.value)
                                                     }
+                                                    onInput={(e) => adjustTextareaHeight(e.target)}
                                                     style={{
                                                         border: "none",
                                                         outline: "none",
-                                                        minHeight: "80px",
                                                         maxHeight: "400px",
                                                         resize: "none",
                                                     }}
@@ -199,6 +216,25 @@ function Notes() {
                                                     }}
                                                 />
                                             )}
+
+                                            {/* Color Picker Circles moved below title and content */}
+                                            <div style={{ display: 'flex', marginTop: '10px', gap: '5px', float: 'right' }}>
+                                                {predefinedColors.map((color) => (
+                                                    <div
+                                                        key={color}
+                                                        onClick={() => handleColorChange(note._id, color)}
+                                                        style={{
+                                                            backgroundColor: color,
+                                                            width: '20px',
+                                                            height: '20px',
+                                                            borderRadius: '50%',
+                                                            cursor: 'pointer',
+                                                            border: '1px solid white',
+                                                            boxShadow: note.color === color ? '0 0 5px #fff' : 'none' // Optional shadow for selected
+                                                        }}
+                                                    />
+                                                ))}
+                                            </div>
                                         </CardBody>
                                     </Card>
                                 </Col>
@@ -223,7 +259,6 @@ function Notes() {
                     color: '#f3a4b5'
                 }}
                 size="sm"
-                // color="primary"
                 onClick={toggleModal}
             >
                 <i className="fa fa-plus" aria-hidden="true" style={{ fontSize: '20px' }}></i>
@@ -250,9 +285,7 @@ function Notes() {
                             <Input
                                 id="content"
                                 name="content"
-                                placeholder="Enter note content"
                                 type="textarea"
-                                rows="3"
                                 value={newNote.content}
                                 onChange={handleInputChange}
                             />
@@ -260,18 +293,20 @@ function Notes() {
                         <FormGroup>
                             <Label for="attachment">Attachment</Label>
                             <Input
-                                id="attachment"
-                                name="attachment"
                                 type="file"
-                                onChange={handleFileChange}
                                 accept="image/*"
+                                onChange={handleFileChange}
                             />
                         </FormGroup>
                     </Form>
                 </ModalBody>
                 <ModalFooter>
-                    <Button color="primary" onClick={addNote}>Add Note</Button>
-                    <Button color="secondary" onClick={toggleModal}>Cancel</Button>
+                    <Button color="primary" onClick={addNote}>
+                        Add Note
+                    </Button>
+                    <Button color="secondary" onClick={toggleModal}>
+                        Cancel
+                    </Button>
                 </ModalFooter>
             </Modal>
 
