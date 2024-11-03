@@ -216,7 +216,7 @@ function Notes() {
                                                     }}
                                                 />
                                             )}
-
+                                            <hr style={{marginTop: '0rem', marginBottom: '0rem'}}/>
                                             {/* Color Picker Circles moved below title and content */}
                                             <div style={{ display: 'flex', marginTop: '10px', gap: '5px', float: 'right' }}>
                                                 {predefinedColors.map((color) => (
