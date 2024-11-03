@@ -23,6 +23,7 @@ const Dashboard = () => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [monthlyTotals, setMonthlyTotals] = useState([]);
+  const [totalSavings, setTotalSavings] = useState([]);
 
   const categoryMap = {
     1: "House Expenses",
@@ -65,6 +66,7 @@ const Dashboard = () => {
       setMonthlyCategoryExpenses(response.data.monthlyCategoryExpenses);
       setCommitmentsData(response.data.commitments);
       setMonthlyTotals(response.data.monthlyTotals);
+      setTotalSavings(response.data.totalSavings);
     } catch (error) {
       console.error("Error fetching monthly data:", error);
     }
@@ -231,12 +233,11 @@ const Dashboard = () => {
     <div className="content">
       {/* Date Range Filter Inline */}
       <Row>
-        <Col lg="12">
-          <Card className="card-chart">
+        <Col lg="8">
+          <Card className="card-chart" style={{ height: '180px' }}>
             <CardHeader>
               <h5 className="card-category">Date Range Filter</h5>
               <div className="d-flex flex-wrap" style={{ alignItems: 'center' }}>
-                {/* Date Inputs */}
                 <FormGroup className="mr-2 mb-2" style={{ flex: '1 0 30%' }}>
                   <Label for="startDate">Start Date</Label>
                   <Input
@@ -255,9 +256,25 @@ const Dashboard = () => {
                     onChange={(e) => setEndDate(e.target.value)}
                   />
                 </FormGroup>
-                <Button color="primary" size="sm" className='mt-3' onClick={handleSearch}><FaSearch /></Button>
+                <Button color="primary" size="sm" className="mt-3" onClick={handleSearch}>
+                  <FaSearch />
+                </Button>
               </div>
             </CardHeader>
+          </Card>
+        </Col>
+
+        <Col lg="4">
+          <Card className="card-chart text-center" style={{ height: '180px', backgroundColor: '#27293d', color: '#fff', borderRadius: '8px' }}>
+            <CardHeader>
+              <h5 className="card-category" style={{ fontSize: '1.0rem', fontWeight: '600', color: '#00f2c3' }}>Total Savings</h5>
+            </CardHeader>
+            <CardBody>
+              <div className="d-flex justify-content-center align-items-center" style={{ fontSize: '2.0rem', fontWeight: 'bold', color: '#00f2c3' }}>
+                {formatInRupees( totalSavings )}
+              </div>
+              <p style={{ color: '#9A9A9A', marginTop: '10px', fontSize: '0.9rem' }}>Overall savings</p>
+            </CardBody>
           </Card>
         </Col>
       </Row>
