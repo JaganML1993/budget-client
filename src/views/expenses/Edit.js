@@ -173,8 +173,8 @@ function EditExpense() {
                             <Button
                               key={cat.value}
                               className={`m-2 ${expenseData.category === cat.value
-                                  ? "btn-primary"
-                                  : "btn-outline-secondary"
+                                ? "btn-primary"
+                                : "btn-outline-secondary"
                                 }`}
                               onClick={() => handleCategoryChange(cat.value)}
                               style={{
@@ -188,7 +188,7 @@ function EditExpense() {
                               {cat.icon}
                               <span
                                 className="mt-2"
-                                style={{ fontSize: "0.55rem", fontWeight: "300" }}
+                                style={{ fontSize: "0.65rem", fontWeight: "300" }}
                               >
                                 {cat.label}
                               </span>

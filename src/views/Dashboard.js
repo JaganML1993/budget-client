@@ -15,6 +15,7 @@ import {
   Input,
   Button,
 } from 'reactstrap';
+import { Progress } from 'reactstrap';
 
 const Dashboard = () => {
   const [dailyTotals, setDailyTotals] = useState([]);
@@ -272,7 +273,7 @@ const Dashboard = () => {
             </CardHeader>
             <CardBody>
               <div className="d-flex justify-content-center align-items-center" style={{ fontSize: '2.0rem', fontWeight: 'bold', color: '#00f2c3' }}>
-                {formatInRupees( totalSavings )}
+                {formatInRupees(totalSavings)}
               </div>
               <p style={{ color: '#9A9A9A', marginTop: '10px', fontSize: '0.9rem' }}>Overall savings</p>
             </CardBody>
@@ -316,11 +317,21 @@ const Dashboard = () => {
           <Card className="card-chart">
             <CardHeader>
               <CardTitle tag="h4">Commitments: Paid & Pending</CardTitle>
-              <h6 style={{ color: '#FFB3BA', fontWeight: 300 }}>
-                Total Paid: <span style={{ color: '#00f2c3' }}>{totalPaidAmount}</span>
-                &nbsp;&nbsp;|&nbsp;&nbsp;
-                Total Pending: <span style={{ color: '#00f2c3' }}>{totalPendingAmount}</span>
-              </h6>
+              <div>
+                {/* Combined Progress Bar for Paid and Pending */}
+                <div>
+                  <Progress multi>
+                    {/* Progress for Paid Amount */}
+                    <Progress bar value={(totalPaidAmountBefore / (totalPaidAmountBefore + totalPendingAmountBefore)) * 100} color="success" />
+                    {/* Progress for Pending Amount */}
+                    <Progress bar value={(totalPendingAmountBefore / (totalPaidAmountBefore + totalPendingAmountBefore)) * 100} color="danger" />
+                  </Progress>
+                  <div style={{ textAlign: 'center', fontWeight: '300', fontSize: '12px' }}>
+                    <span style={{ color: '#00f2c3' }}>{formatInRupees(totalPaidAmountBefore)} Paid</span> |
+                    <span style={{ color: '#FFB3BA' }}>{formatInRupees(totalPendingAmountBefore)} Pending</span>
+                  </div>
+                </div>
+              </div>
             </CardHeader>
             <CardBody>
               <div style={{ height: '300px' }}>

@@ -227,7 +227,7 @@ function Tables() {
                             <FaTrash />
                           </Button>
 
-                          {expense.category == "7" && (
+                          {expense.category == "4" && (
                             <Button color="success" size="sm" onClick={() => goToUpdateBalance(expense._id)}>
                               <FaSyncAlt />
                             </Button>

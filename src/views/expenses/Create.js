@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Button, Card, CardHeader, CardBody, CardFooter, FormGroup, Form, Input, Row, Col } from "reactstrap";
@@ -19,6 +19,29 @@ function CreateExpense() {
     attachment: null,
   });
   const [redirect, setRedirect] = useState(false);
+  const [recentNames, setRecentNames] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    fetchRecentNames();
+  }, [userId]);
+
+  const fetchRecentNames = async (query = "") => {
+    try {
+      const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/admin/expenses/recent-names/${userId}`, {
+        params: { query }, // Pass the query string correctly
+      });
+      setRecentNames(data.names);
+    } catch (error) {
+      // toast.error("Failed to fetch recent expense names.");
+    }
+  };
+
+  const handleNameChange = (e) => {
+    const value = e.target.value;
+    setExpenseData({ ...expenseData, name: value });
+    fetchRecentNames(value);
+  };
 
   const handleCategoryChange = (category) => {
     setExpenseData({ ...expenseData, category });
@@ -99,7 +122,19 @@ function CreateExpense() {
                     <Col md="6">
                       <FormGroup>
                         <label>Expense Name</label>
-                        <Input name="name" placeholder="Enter expense name" type="text" value={expenseData.name} onChange={(e) => setExpenseData({ ...expenseData, name: e.target.value })} />
+                        <Input
+                          list="expense-names"
+                          name="name"
+                          placeholder="Enter expense name"
+                          type="text"
+                          value={expenseData.name}
+                          onChange={handleNameChange} // Trigger onChange
+                        />
+                        <datalist id="expense-names">
+                          {recentNames.map((name, index) => (
+                            <option key={index} value={name} />
+                          ))}
+                        </datalist>
                       </FormGroup>
                     </Col>
                     <Col md="6">
@@ -122,7 +157,7 @@ function CreateExpense() {
                               style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '5px', width: '80px' }}
                             >
                               {cat.icon}
-                              <span className="mt-2" style={{ fontSize: '0.55rem', fontWeight: '300' }}>{cat.label}</span>
+                              <span className="mt-2" style={{ fontSize: '0.65rem', fontWeight: '300' }}>{cat.label}</span>
                             </Button>
                           ))}
                         </div>
