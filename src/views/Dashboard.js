@@ -268,7 +268,7 @@ const Dashboard = () => {
         </Col>
 
         <Col lg="4">
-          <Card className="card-chart text-center" style={{ height: '180px', backgroundColor: '#27293d', color: '#fff', borderRadius: '8px' }}>
+          <Card className="card-chart text-center" style={{ height: '180px', borderRadius: '8px' }}>
             <CardHeader>
               <h5 className="card-category" style={{ fontSize: '1.0rem', fontWeight: '600', color: '#00f2c3' }}>Total Savings</h5>
             </CardHeader>
@@ -282,21 +282,6 @@ const Dashboard = () => {
         </Col>
       </Row>
       <Row>
-        <Col lg="6">
-          <Card className="card-chart">
-            <CardHeader>
-              <CardTitle tag="h4">Daily Expenses Overview</CardTitle>
-              <h6 style={{ color: '#FFB3BA', fontWeight: 300 }}>
-                Total Monthly Spending - <span style={{ color: '#00f2c3' }}>{formatInRupees(dailyTotals.reduce((a, b) => a + b, 0) || 0)}</span>
-              </h6>
-            </CardHeader>
-            <CardBody>
-              <div style={{ height: '300px' }}>
-                <Bar data={areaChartData} options={chartOptions} />
-              </div>
-            </CardBody>
-          </Card>
-        </Col>
         <Col l="6">
           <Card className="card-chart" style={{ height: '405px' }}>
             <CardHeader>
@@ -340,6 +325,21 @@ const Dashboard = () => {
                   <p>No upcoming payments.</p>
                 )}
               </Row>
+            </CardBody>
+          </Card>
+        </Col>
+        <Col lg="6">
+          <Card className="card-chart">
+            <CardHeader>
+              <CardTitle tag="h4">Daily Expenses Overview</CardTitle>
+              <h6 style={{ color: '#FFB3BA', fontWeight: 300 }}>
+                Total Monthly Spending - <span style={{ color: '#00f2c3' }}>{formatInRupees(dailyTotals.reduce((a, b) => a + b, 0) || 0)}</span>
+              </h6>
+            </CardHeader>
+            <CardBody>
+              <div style={{ height: '300px' }}>
+                <Bar data={areaChartData} options={chartOptions} />
+              </div>
             </CardBody>
           </Card>
         </Col>
