@@ -1,59 +1,31 @@
 import React, { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import axios from "axios"; // Import Axios
-
-// reactstrap components
-import {
-  Button,
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  FormGroup,
-  Form,
-  Input,
-  Row,
-  Col,
-} from "reactstrap";
+import { Button, Card, CardHeader, CardBody, CardFooter, FormGroup, Form, Input, Row, Col } from "reactstrap";
+import { FaHome, FaShoppingCart, FaMoneyBillWave, FaWallet, FaPiggyBank, FaTags, FaCreditCard, FaHandHoldingUsd } from "react-icons/fa"; // Import icons
+import axios from "axios";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "contexts/AuthContext";
 
 function CreateExpense() {
   const navigate = useNavigate();
+  const { userId } = useAuth();
   const [expenseData, setExpenseData] = useState({
     name: "",
     amount: "",
     category: "1",
-    paidOn: new Date().toISOString().split("T")[0], // Sets current date
-    remarks: "", // Added remarks
-    attachment: null, // For storing the selected file
+    paidOn: new Date().toISOString().split("T")[0],
+    remarks: "",
+    attachment: null,
   });
+  const [redirect, setRedirect] = useState(false);
 
-  const { userId } = useAuth();
-
-  const [redirect, setRedirect] = useState(false); // State for redirecting
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setExpenseData({
-      ...expenseData,
-      [name]: value,
-    });
-  };
-
-  const handleFileChange = (e) => {
-    const file = e.target.files[0]; // Get the selected file
-    setExpenseData({
-      ...expenseData,
-      attachment: file, // Store the file in state
-    });
+  const handleCategoryChange = (category) => {
+    setExpenseData({ ...expenseData, category });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Prepare form data
     const formData = new FormData();
     formData.append("name", expenseData.name);
     formData.append("amount", expenseData.amount);
@@ -63,63 +35,54 @@ function CreateExpense() {
     if (expenseData.attachment) {
       formData.append("attachment", expenseData.attachment);
     }
-
     formData.append("createdBy", userId);
 
     try {
       const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/admin/expense/store`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data', // Important for file uploads
-        },
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
-
-      const data = response.data; // Parse the response
-
-      // Success - Show success toast
-      toast.success(data.message || "Expense created successfully!", {
-        autoClose: 2000, // Close after 2 seconds
-      });
-
-      // Clear the form fields after successful submission
+      toast.success(response.data.message || "Expense created successfully!", { autoClose: 2000 });
       setExpenseData({
         name: "",
         amount: "",
-        category: "1", // Default category
+        category: "1",
         paidOn: new Date().toISOString().split("T")[0],
         remarks: "",
         attachment: null,
       });
-
-      setRedirect(true); // Set redirect state to true
-
+      setRedirect(true);
     } catch (error) {
-      // Error handling
       if (error.response) {
         const data = error.response.data;
         if (error.response.status === 400 && data.errors) {
-          // Validation error - Show error messages from server
           data.errors.forEach((error) => {
-            toast.error(error.msg, { autoClose: 2000 }); // Close after 2 seconds
+            toast.error(error.msg, { autoClose: 2000 });
           });
         } else {
-          // General error handling for non-400 errors
-          toast.error(data.message || "Failed to create expense.", { autoClose: 2000 }); // Close after 2 seconds
+          toast.error(data.message || "Failed to create expense.", { autoClose: 2000 });
         }
       } else {
-        // If an error occurs (e.g., network issues), catch it here
-        toast.error("An error occurred. Please try again.", { autoClose: 2000 }); // Close after 2 seconds
+        toast.error("An error occurred. Please try again.", { autoClose: 2000 });
       }
     }
   };
 
-  // Redirect if redirect state is true
   if (redirect) {
     return <Navigate to="/admin/expenses" />;
   }
 
-  const handleBack = () => {
-    navigate("/admin/expenses"); // Navigate back to the expenses list
-  };
+  const categories = [
+    { value: "1", label: "House Expenses", icon: <FaHome /> },
+    { value: "2", label: "Shopping", icon: <FaShoppingCart /> },
+    { value: "3", label: "EMI", icon: <FaCreditCard /> },
+    { value: "4", label: "Cash", icon: <FaWallet /> },
+    { value: "5", label: "Others", icon: <FaTags /> },
+    { value: "6", label: "Bill Payment", icon: <FaMoneyBillWave /> },
+    { value: "7", label: "Savings", icon: <FaPiggyBank /> },
+    { value: "8", label: "Interest Paid", icon: <FaHandHoldingUsd /> },
+  ];
+
+  const handleBack = () => navigate("/admin/expenses");
 
   return (
     <>
@@ -136,100 +99,53 @@ function CreateExpense() {
                     <Col md="6">
                       <FormGroup>
                         <label>Expense Name</label>
-                        <Input
-                          name="name"
-                          placeholder="Enter expense name"
-                          type="text"
-                          value={expenseData.name}
-                          onChange={handleChange}
-                        />
+                        <Input name="name" placeholder="Enter expense name" type="text" value={expenseData.name} onChange={(e) => setExpenseData({ ...expenseData, name: e.target.value })} />
                       </FormGroup>
                     </Col>
                     <Col md="6">
                       <FormGroup>
                         <label>Amount</label>
-                        <Input
-                          name="amount"
-                          placeholder="Enter amount"
-                          type="number"
-                          value={expenseData.amount}
-                          onChange={handleChange}
-                        />
+                        <Input name="amount" placeholder="Enter amount" type="number" value={expenseData.amount} onChange={(e) => setExpenseData({ ...expenseData, amount: e.target.value })} />
                       </FormGroup>
                     </Col>
                   </Row>
                   <Row>
-                    <Col md="6">
+                    <Col md="12">
                       <FormGroup>
                         <label>Category</label>
-                        <Input
-                          type="select"
-                          name="category"
-                          value={expenseData.category}
-                          onChange={handleChange}
-                        >
-                          <option value="">Select a category</option>
-                          <option value="1">House Expenses</option>
-                          <option value="2">Shopping</option>
-                          <option value="3">EMI</option>
-                          <option value="6">Bill Payment</option>
-                          <option value="4">Cash</option>
-                          <option value="7">Savings</option>
-                          <option value="5">Others</option>
-                          <option value="8">Interest Paid</option>
-                        </Input>
+                        <div className="d-flex flex-wrap">
+                          {categories.map((cat) => (
+                            <Button
+                              key={cat.value}
+                              className={`m-2 ${expenseData.category === cat.value ? 'btn-primary' : 'btn-outline-secondary'}`}
+                              onClick={() => handleCategoryChange(cat.value)}
+                              style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '5px', width: '80px' }}
+                            >
+                              {cat.icon}
+                              <span className="mt-2" style={{ fontSize: '0.55rem', fontWeight: '300' }}>{cat.label}</span>
+                            </Button>
+                          ))}
+                        </div>
                       </FormGroup>
                     </Col>
-
+                  </Row>
+                  <Row>
                     <Col md="6">
                       <FormGroup>
                         <label>Paid On</label>
-                        <Input
-                          name="paidOn"
-                          type="date"
-                          value={expenseData.paidOn}
-                          onChange={handleChange}
-                        />
+                        <Input name="paidOn" type="date" value={expenseData.paidOn} onChange={(e) => setExpenseData({ ...expenseData, paidOn: e.target.value })} />
                       </FormGroup>
                     </Col>
-                  </Row>
-                  <Row>
                     <Col md="6">
                       <FormGroup>
                         <label>Remarks</label>
-                        <Input
-                          name="remarks"
-                          placeholder="Enter remarks"
-                          type="text"
-                          value={expenseData.remarks}
-                          onChange={handleChange}
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col md="6">
-                      <FormGroup>
-                        <label>Attachment</label>
-                        <Input
-                          name="attachment"
-                          type="file"
-                          onChange={handleFileChange}
-                          accept="image/*" // Accepts image files only
-                        />
+                        <Input name="remarks" placeholder="Enter remarks" type="text" value={expenseData.remarks} onChange={(e) => setExpenseData({ ...expenseData, remarks: e.target.value })} />
                       </FormGroup>
                     </Col>
                   </Row>
                   <CardFooter>
-                    <Button
-                      className="mr-2"
-                      color="secondary"
-                      type="button"
-                      onClick={handleBack}
-                    >
-                      Back
-                    </Button>
-                    <Button className="btn-fill" color="primary" type="submit">
-                      Save
-                    </Button>
+                    <Button color="secondary" onClick={handleBack}>Back</Button>
+                    <Button className="btn-fill" color="primary" type="submit">Save</Button>
                   </CardFooter>
                 </Form>
               </CardBody>

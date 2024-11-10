@@ -33,6 +33,7 @@ const Dashboard = () => {
     5: "Others",
     6: "Bill Payment",
     7: "Savings",
+    8: "Interest Paid",
   };
 
   const setDefaultDates = () => {
