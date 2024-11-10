@@ -31,6 +31,7 @@ function CreateCommitment() {
     payType: "1", // Default to Expenses
     category: "1", // Default to EMI
     remarks: "",
+    dueDate: "1",
     attachment: null, // For storing selected files
     status: "1", // Default to Ongoing
   });
@@ -63,7 +64,6 @@ function CreateCommitment() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     // Prepare form data
     const formData = new FormData();
     formData.append("payFor", commitmentData.payFor);
@@ -71,7 +71,8 @@ function CreateCommitment() {
     formData.append("emiAmount", parseFloat(commitmentData.emiAmount)); // Convert to float
     formData.append("payType", parseInt(commitmentData.payType)); // Convert to integer
     formData.append("category", parseInt(commitmentData.category)); // Convert to integer
-    formData.append("remarks", commitmentData.remarks); // HTML content
+    formData.append("dueDate", parseInt(commitmentData.dueDate));
+    formData.append("dueDate", commitmentData.dueDate); // HTML content
     formData.append("status", parseInt(commitmentData.status)); // Convert to integer
     formData.append("createdBy", userId);
 
@@ -106,6 +107,7 @@ function CreateCommitment() {
         payType: "1", // Default to Expenses
         category: "1", // Default to EMI
         remarks: "",
+        dueDate: "",
         attachment: null, // For storing selected files
         status: "1", // Default to Ongoing
 
@@ -292,6 +294,26 @@ function CreateCommitment() {
                           <option value="2">Completed</option>
                         </Input>
                       </FormGroup>
+                    </Col>
+                    <Col md="6">
+                      <FormGroup>
+                        <Label for="dueDate">Due Date (Day)</Label>
+                        <Input
+                          type="select"
+                          name="dueDate"
+                          id="dueDate"
+                          value={commitmentData.dueDate}
+                          onChange={handleChange}
+                          required
+                        >
+                          {[...Array(31).keys()].map((day) => (
+                            <option key={day + 1} value={day + 1}>
+                              {day + 1}
+                            </option>
+                          ))}
+                        </Input>
+                      </FormGroup>
+
                     </Col>
                   </Row>
 

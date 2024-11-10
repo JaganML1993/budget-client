@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
-import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button, Card, CardHeader, CardBody, CardFooter, FormGroup, Form, Input, Row, Col, Label } from "reactstrap";
@@ -21,6 +20,7 @@ function EditCommitment() {
         payType: "1",
         category: "1",
         remarks: "",
+        dueDate: "1",
         attachment: null,
         status: "1",
     });
@@ -41,6 +41,7 @@ function EditCommitment() {
                     payType: commitment.payType.toString(),
                     category: commitment.category.toString(),
                     remarks: commitment.remarks || "",
+                    dueDate: commitment.dueDate, // Store the full date
                     attachment: commitment.attachment ? commitment.attachment[0] : null,
                     status: commitment.status.toString(),
                 });
@@ -63,13 +64,6 @@ function EditCommitment() {
         }));
     };
 
-    const handleRemarksChange = (value) => {
-        setCommitmentData((prevData) => ({
-            ...prevData,
-            remarks: value,
-        }));
-    };
-
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         setCommitmentData((prevData) => ({
@@ -80,7 +74,7 @@ function EditCommitment() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+        const dueDate = commitmentData.dueDate ? commitmentData.dueDate : "1";
         const formData = new FormData();
         formData.append("payFor", commitmentData.payFor);
         formData.append("totalEmi", parseInt(commitmentData.totalEmi));
@@ -88,6 +82,7 @@ function EditCommitment() {
         formData.append("payType", parseInt(commitmentData.payType));
         formData.append("category", parseInt(commitmentData.category));
         formData.append("remarks", commitmentData.remarks);
+        formData.append("dueDate", parseInt(dueDate, 10));
         formData.append("status", parseInt(commitmentData.status));
         formData.append("createdBy", userId);
 
@@ -127,6 +122,7 @@ function EditCommitment() {
             }
         }
     };
+
 
     const handleBack = () => {
         navigate("/admin/commitments");
@@ -283,6 +279,25 @@ function EditCommitment() {
                                                 >
                                                     <option value="1">Ongoing</option>
                                                     <option value="2">Completed</option>
+                                                </Input>
+                                            </FormGroup>
+                                        </Col>
+                                        <Col md="6">
+                                            <FormGroup>
+                                                <Label for="dueDate">Due Date (Day)</Label>
+                                                <Input
+                                                    type="select"
+                                                    name="dueDate"
+                                                    id="dueDate"
+                                                    value={commitmentData.dueDate}
+                                                    onChange={handleChange}
+                                                    required
+                                                >
+                                                    {[...Array(31).keys()].map((day) => (
+                                                        <option key={day + 1} value={(day + 1).toString()}>
+                                                            {day + 1}
+                                                        </option>
+                                                    ))}
                                                 </Input>
                                             </FormGroup>
                                         </Col>

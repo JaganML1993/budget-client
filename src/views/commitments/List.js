@@ -126,6 +126,7 @@ function Tables() {
                       <th>Pay Type</th>
                       <th>Category</th>
                       <th>Status</th>
+                      <th>Due Date</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
@@ -147,6 +148,7 @@ function Tables() {
                         <td>{getPayType(commitment.payType)}</td>
                         <td>{getCategory(commitment.category)}</td>
                         <td>{getStatus(commitment.status)}</td>
+                        <td>{commitment.dueDate}</td>
                         <td>
                           <Button color="info" size="sm" onClick={() => goToViewCommitment(commitment._id)}>
                             <FaEye />

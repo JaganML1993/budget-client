@@ -25,6 +25,7 @@ const Dashboard = () => {
   const [endDate, setEndDate] = useState('');
   const [monthlyTotals, setMonthlyTotals] = useState([]);
   const [totalSavings, setTotalSavings] = useState([]);
+  const [upcomingPayments, setUpcomingPayments] = useState([]);
 
   const categoryMap = {
     1: "House Expenses",
@@ -64,11 +65,14 @@ const Dashboard = () => {
         params: { userId, startDate, endDate }
       });
 
+      console.log(response.data.upcomingPayments);
+
       setDailyTotals(response.data.dailyTotals);
       setMonthlyCategoryExpenses(response.data.monthlyCategoryExpenses);
       setCommitmentsData(response.data.commitments);
       setMonthlyTotals(response.data.monthlyTotals);
       setTotalSavings(response.data.totalSavings);
+      setUpcomingPayments(response.data.upcomingPayments);
     } catch (error) {
       console.error("Error fetching monthly data:", error);
     }
@@ -228,9 +232,6 @@ const Dashboard = () => {
   const totalPaidAmountBefore = commitmentsData.reduce((total, commitment) => total + parseFloat(commitment.totalPaid), 0);
   const totalPendingAmountBefore = commitmentsData.reduce((total, commitment) => total + parseFloat(commitment.totalPending), 0);
 
-  const totalPaidAmount = formatInRupees(totalPaidAmountBefore);
-  const totalPendingAmount = formatInRupees(totalPendingAmountBefore);
-
   return (
     <div className="content">
       {/* Date Range Filter Inline */}
@@ -281,7 +282,7 @@ const Dashboard = () => {
         </Col>
       </Row>
       <Row>
-        <Col lg="12">
+        <Col lg="6">
           <Card className="card-chart">
             <CardHeader>
               <CardTitle tag="h4">Daily Expenses Overview</CardTitle>
@@ -293,6 +294,52 @@ const Dashboard = () => {
               <div style={{ height: '300px' }}>
                 <Bar data={areaChartData} options={chartOptions} />
               </div>
+            </CardBody>
+          </Card>
+        </Col>
+        <Col l="6">
+          <Card className="card-chart" style={{ height: '405px' }}>
+            <CardHeader>
+              <CardTitle tag="h4">Upcoming Payments</CardTitle>
+            </CardHeader>
+            <CardBody style={{ maxHeight: '400px', overflowY: 'auto', overflowX: 'hidden', paddingRight: '30px', paddingLeft: '30px' }}>
+              <Row>
+                {upcomingPayments && upcomingPayments.length > 0 ? (
+                  upcomingPayments.map((payment, index) => (
+                    <Col lg="12" key={index} className="mb-3">
+                      <Row className="align-items-center">
+                        <Col lg="4" className="d-flex align-items-center">
+                          <h5 className="card-category" style={{ fontWeight: '500', fontSize: '12px' }}>
+                            {payment.payFor}
+                            {payment.payType === 1 ? (
+                              <i className="fas fa-arrow-down" style={{ color: '#FF5733', marginLeft: '4px' }}></i>
+                            ) : (
+                              <i className="fas fa-arrow-up" style={{ color: '#00f2c3', marginLeft: '4px' }}></i>
+                            )}
+                          </h5>
+                        </Col>
+                        <Col lg="4">
+                          <h6 style={{ color: '#00f2c3', fontWeight: '200', fontSize: '12px' }}>
+                            {formatInRupees(parseFloat(payment.emiAmount.$numberDecimal))}
+                          </h6>
+                        </Col>
+                        <Col lg="4">
+                          {payment.dueInDays > 0 ? (
+                            <p style={{ color: '#00f2c3', fontWeight: '200', fontSize: '12px' }}>Due in {payment.dueInDays} days</p>
+                          ) : payment.dueInDays === 0 ? (
+                            <p style={{ color: '#FFC300', fontWeight: '200', fontSize: '12px' }}>Due today</p>
+                          ) : (
+                            <p style={{ color: '#FF5733', fontWeight: '200', fontSize: '12px' }}>Missed by {Math.abs(payment.dueInDays)} days</p>
+                          )}
+                        </Col>
+                      </Row>
+                      <hr style={{ borderColor: '#2b3553', margin: '5px 0' }} />
+                    </Col>
+                  ))
+                ) : (
+                  <p>No upcoming payments.</p>
+                )}
+              </Row>
             </CardBody>
           </Card>
         </Col>
@@ -326,7 +373,7 @@ const Dashboard = () => {
                     {/* Progress for Pending Amount */}
                     <Progress bar value={(totalPendingAmountBefore / (totalPaidAmountBefore + totalPendingAmountBefore)) * 100} color="danger" />
                   </Progress>
-                  <div style={{ textAlign: 'center', fontWeight: '300', fontSize: '12px' }}>
+                  <div style={{ textAlign: 'center', fontWeight: '200', fontSize: '12px', fontSize: '12px' }}>
                     <span style={{ color: '#00f2c3' }}>{formatInRupees(totalPaidAmountBefore)} Paid</span> |
                     <span style={{ color: '#FFB3BA' }}>{formatInRupees(totalPendingAmountBefore)} Pending</span>
                   </div>
