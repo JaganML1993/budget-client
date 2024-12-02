@@ -46,6 +46,16 @@ function Notes() {
         fetchNotes();
     }, []);
 
+    useEffect(() => {
+        const storedColors = JSON.parse(localStorage.getItem("noteColors")) || {};
+        setNotes((prev) =>
+            prev.map((note) => ({
+                ...note,
+                color: storedColors[note._id] || note.color,
+            }))
+        );
+    }, [notes]);
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setNewNote((prev) => ({ ...prev, [name]: value }));
@@ -102,6 +112,15 @@ function Notes() {
     };
 
     const handleColorChange = (id, color) => {
+        setNotes((prev) =>
+            prev.map((note) => (note._id === id ? { ...note, color } : note))
+        );
+
+        // Save color to localStorage
+        const storedColors = JSON.parse(localStorage.getItem("noteColors")) || {};
+        storedColors[id] = color;
+        localStorage.setItem("noteColors", JSON.stringify(storedColors));
+
         handleNoteChange(id, "color", color);
     };
 
@@ -216,7 +235,7 @@ function Notes() {
                                                     }}
                                                 />
                                             )}
-                                            <hr style={{marginTop: '0rem', marginBottom: '0rem'}}/>
+                                            <hr style={{ marginTop: '0rem', marginBottom: '0rem' }} />
                                             {/* Color Picker Circles moved below title and content */}
                                             <div style={{ display: 'flex', marginTop: '10px', gap: '5px', float: 'right' }}>
                                                 {predefinedColors.map((color) => (

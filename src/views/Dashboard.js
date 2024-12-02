@@ -283,11 +283,11 @@ const Dashboard = () => {
       </Row>
       <Row>
         <Col l="6">
-          <Card className="card-chart" style={{ height: '405px' }}>
+          <Card className="card-chart">
             <CardHeader>
               <CardTitle tag="h4">Upcoming Payments</CardTitle>
             </CardHeader>
-            <CardBody style={{ maxHeight: '400px', overflowY: 'auto', overflowX: 'hidden', paddingRight: '30px', paddingLeft: '30px' }}>
+            <CardBody style={{ minHeight: '110px', maxHeight: '350px', overflowY: 'auto', overflowX: 'hidden', paddingRight: '30px', paddingLeft: '30px' }}>
               <Row>
                 {upcomingPayments && upcomingPayments.length > 0 ? (
                   upcomingPayments.map((payment, index) => (
