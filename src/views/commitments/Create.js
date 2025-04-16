@@ -72,7 +72,6 @@ function CreateCommitment() {
     formData.append("payType", parseInt(commitmentData.payType)); // Convert to integer
     formData.append("category", parseInt(commitmentData.category)); // Convert to integer
     formData.append("dueDate", parseInt(commitmentData.dueDate));
-    formData.append("dueDate", commitmentData.dueDate); // HTML content
     formData.append("status", parseInt(commitmentData.status)); // Convert to integer
     formData.append("createdBy", userId);
 

@@ -1,5 +1,7 @@
 import Dashboard from "views/Dashboard.js";
 import Login from "views/auth/Login.js";
+import HouseSavings from "views/house-savings/List.js";
+import HouseSavingsCreate from "views/house-savings/Create.js";
 import Expenses from "views/expenses/List.js";
 import ExpensesCreate from "views/expenses/Create.js";
 import ExpensesEdit from "views/expenses/Edit.js";
@@ -29,6 +31,25 @@ var routes = [
     component: (
       <ProtectedRoute>
         <Dashboard />
+      </ProtectedRoute>
+    ),
+    layout: "/admin",
+  },
+  {
+    path: "/house-savings",
+    name: "House Savings",
+    icon: "tim-icons icon-bank", // Home icon for house savings
+    component: (
+      <ProtectedRoute>
+        <HouseSavings />
+      </ProtectedRoute>
+    ),
+    layout: "/admin",
+  },  {
+    path: "/house-savings/create",
+    component: (
+      <ProtectedRoute>
+        <HouseSavingsCreate />
       </ProtectedRoute>
     ),
     layout: "/admin",

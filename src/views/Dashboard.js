@@ -235,7 +235,7 @@ const Dashboard = () => {
   return (
     <div className="content">
       {/* Date Range Filter Inline */}
-      <Row>
+      {/* <Row>
         <Col lg="8">
           <Card className="card-chart" style={{ height: '180px' }}>
             <CardHeader>
@@ -280,7 +280,7 @@ const Dashboard = () => {
             </CardBody>
           </Card>
         </Col>
-      </Row>
+      </Row> */}
       <Row>
         <Col l="6">
           <Card className="card-chart">
@@ -328,7 +328,7 @@ const Dashboard = () => {
             </CardBody>
           </Card>
         </Col>
-        <Col lg="6">
+        {/* <Col lg="6">
           <Card className="card-chart">
             <CardHeader>
               <CardTitle tag="h4">Daily Expenses Overview</CardTitle>
@@ -342,10 +342,10 @@ const Dashboard = () => {
               </div>
             </CardBody>
           </Card>
-        </Col>
+        </Col> */}
       </Row>
       <Row>
-        <Col lg="6">
+        {/* <Col lg="6">
           <Card className="card-chart">
             <CardHeader>
               <CardTitle tag="h4">Spending by Category</CardTitle>
@@ -359,8 +359,8 @@ const Dashboard = () => {
               </div>
             </CardBody>
           </Card>
-        </Col>
-        <Col lg="6">
+        </Col> */}
+        <Col lg="12">
           <Card className="card-chart">
             <CardHeader>
               <CardTitle tag="h4">Commitments: Paid & Pending</CardTitle>
@@ -389,7 +389,7 @@ const Dashboard = () => {
         </Col>
 
       </Row>
-      <Row>
+      {/* <Row>
         <Col lg="12">
           <Card className="card-chart">
             <CardHeader>
@@ -402,7 +402,7 @@ const Dashboard = () => {
             </CardBody>
           </Card>
         </Col>
-      </Row>
+      </Row> */}
     </div>
   );
 };
