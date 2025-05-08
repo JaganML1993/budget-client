@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Doughnut, Bar } from 'react-chartjs-2';
 import 'chartjs-plugin-datalabels';
-import { FaSearch } from 'react-icons/fa';
+// import { FaSearch } from 'react-icons/fa';
 import {
   Card,
   CardHeader,
@@ -10,10 +10,10 @@ import {
   CardTitle,
   Row,
   Col,
-  FormGroup,
-  Label,
-  Input,
-  Button,
+  // FormGroup,
+  // Label,
+  // Input,
+  // Button,
 } from 'reactstrap';
 import { Progress } from 'reactstrap';
 
@@ -27,16 +27,16 @@ const Dashboard = () => {
   const [totalSavings, setTotalSavings] = useState([]);
   const [upcomingPayments, setUpcomingPayments] = useState([]);
 
-  const categoryMap = {
-    1: "House Expenses",
-    2: "Shopping",
-    3: "EMI",
-    4: "Cash",
-    5: "Others",
-    6: "Bill Payment",
-    7: "Savings",
-    8: "Interest Paid",
-  };
+  // const categoryMap = {
+  //   1: "House Expenses",
+  //   2: "Shopping",
+  //   3: "EMI",
+  //   4: "Cash",
+  //   5: "Others",
+  //   6: "Bill Payment",
+  //   7: "Savings",
+  //   8: "Interest Paid",
+  // };
 
   const setDefaultDates = () => {
     const now = new Date();
@@ -65,8 +65,6 @@ const Dashboard = () => {
         params: { userId, startDate, endDate }
       });
 
-      console.log(response.data.upcomingPayments);
-
       setDailyTotals(response.data.dailyTotals);
       setMonthlyCategoryExpenses(response.data.monthlyCategoryExpenses);
       setCommitmentsData(response.data.commitments);
@@ -82,28 +80,28 @@ const Dashboard = () => {
     fetchMonthlyData();
   };
 
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      y: {
-        beginAtZero: true,
-      },
-    },
-    plugins: {
-      datalabels: {
-        display: true,
-        anchor: 'end',
-        align: 'end',
-        color: 'black',
-        font: {
-          weight: 'bold',
-          size: 10,
-        },
-        formatter: (value) => `₹${value.toFixed(2)}`,
-      },
-    },
-  };
+  // const chartOptions = {
+  //   responsive: true,
+  //   maintainAspectRatio: false,
+  //   scales: {
+  //     y: {
+  //       beginAtZero: true,
+  //     },
+  //   },
+  //   plugins: {
+  //     datalabels: {
+  //       display: true,
+  //       anchor: 'end',
+  //       align: 'end',
+  //       color: 'black',
+  //       font: {
+  //         weight: 'bold',
+  //         size: 10,
+  //       },
+  //       formatter: (value) => `₹${value.toFixed(2)}`,
+  //     },
+  //   },
+  // };
 
   // Format in Indian Rupees
   const formatInRupees = (amount) => amount.toLocaleString('en-IN', {
@@ -113,46 +111,46 @@ const Dashboard = () => {
   });
 
   // Area chart data for daily totals
-  const areaChartData = {
-    labels: Array.from({ length: dailyTotals.length }, (_, i) => i + 1),
-    datasets: [
-      {
-        label: "Daily Expenses",
-        fill: true,
-        backgroundColor: "rgba(29,140,248,0.4)", // Gradient fill
-        borderColor: "rgba(75, 192, 192, 1)",
-        borderWidth: 0.5,
-        data: dailyTotals.map(amount => parseFloat(amount)),
-      },
-    ],
-  };
+  // const areaChartData = {
+  //   labels: Array.from({ length: dailyTotals.length }, (_, i) => i + 1),
+  //   datasets: [
+  //     {
+  //       label: "Daily Expenses",
+  //       fill: true,
+  //       backgroundColor: "rgba(29,140,248,0.4)", // Gradient fill
+  //       borderColor: "rgba(75, 192, 192, 1)",
+  //       borderWidth: 0.5,
+  //       data: dailyTotals.map(amount => parseFloat(amount)),
+  //     },
+  //   ],
+  // };
 
-  const pieChartData = {
-    labels: monthlyCategoryExpenses.map(expense => categoryMap[expense._id]),
-    datasets: [
-      {
-        label: 'Expenses by Category',
-        data: monthlyCategoryExpenses.map(expense => expense.totalAmount),
-        backgroundColor: [
-          'rgba(255, 99, 132, 0.6)',
-          'rgba(54, 162, 235, 0.6)',
-          'rgba(255, 206, 86, 0.6)',
-          'rgba(75, 192, 192, 0.6)',
-          'rgba(153, 102, 255, 0.6)',
-          'rgba(255, 159, 64, 0.6)',
-          'rgba(255, 205, 86, 0.6)',
-        ],
-        borderColor: 'rgba(0, 0, 0, 0)', // Set border color to transparent
-        borderWidth: 0, // Remove the border
-      },
-    ],
-  };
+  // const pieChartData = {
+  //   labels: monthlyCategoryExpenses.map(expense => categoryMap[expense._id]),
+  //   datasets: [
+  //     {
+  //       label: 'Expenses by Category',
+  //       data: monthlyCategoryExpenses.map(expense => expense.totalAmount),
+  //       backgroundColor: [
+  //         'rgba(255, 99, 132, 0.6)',
+  //         'rgba(54, 162, 235, 0.6)',
+  //         'rgba(255, 206, 86, 0.6)',
+  //         'rgba(75, 192, 192, 0.6)',
+  //         'rgba(153, 102, 255, 0.6)',
+  //         'rgba(255, 159, 64, 0.6)',
+  //         'rgba(255, 205, 86, 0.6)',
+  //       ],
+  //       borderColor: 'rgba(0, 0, 0, 0)', // Set border color to transparent
+  //       borderWidth: 0, // Remove the border
+  //     },
+  //   ],
+  // };
 
-  const mostSpentCategory = monthlyCategoryExpenses.reduce((prev, current) => {
-    return (prev.totalAmount > current.totalAmount) ? prev : current;
-  }, { totalAmount: 0 });
+  // const mostSpentCategory = monthlyCategoryExpenses.reduce((prev, current) => {
+  //   return (prev.totalAmount > current.totalAmount) ? prev : current;
+  // }, { totalAmount: 0 });
 
-  const mostSpentCategoryLabel = categoryMap[mostSpentCategory._id] || '-';
+  // const mostSpentCategoryLabel = categoryMap[mostSpentCategory._id] || '-';
 
   const stackedBarChartData = {
     labels: commitmentsData.map(commitment => commitment.payFor),
@@ -184,50 +182,50 @@ const Dashboard = () => {
     },
   };
 
-  const monthlyChartData = {
-    labels: Array.from({ length: 12 }, (_, i) => new Date(0, i).toLocaleString('default', { month: 'long' })),
-    datasets: [
-      {
-        label: "Monthly Total Expenses",
-        backgroundColor: monthlyTotals.map((_, index) => {
-          const colors = [
-            'rgba(29,140,248,0.6)',
-            'rgba(75, 192, 192, 0.6)',
-            'rgba(255, 99, 132, 0.6)',
-            'rgba(255, 206, 86, 0.6)',
-            'rgba(54, 162, 235, 0.6)',
-            'rgba(153, 102, 255, 0.6)',
-            'rgba(255, 159, 64, 0.6)',
-            'rgba(255, 205, 86, 0.6)',
-            'rgba(201, 203, 207, 0.6)',
-            'rgba(255, 99, 132, 0.6)',
-            'rgba(54, 162, 235, 0.6)',
-            'rgba(75, 192, 192, 0.6)',
-          ];
-          return colors[index % colors.length];
-        }),
-        borderColor: monthlyTotals.map((_, index) => {
-          const colors = [
-            'rgba(29,140,248,1)',
-            'rgba(75, 192, 192, 1)',
-            'rgba(255, 99, 132, 1)',
-            'rgba(255, 206, 86, 1)',
-            'rgba(54, 162, 235, 1)',
-            'rgba(153, 102, 255, 1)',
-            'rgba(255, 159, 64, 1)',
-            'rgba(255, 205, 86, 1)',
-            'rgba(201, 203, 207, 1)',
-            'rgba(255, 99, 132, 1)',
-            'rgba(54, 162, 235, 1)',
-            'rgba(75, 192, 192, 1)',
-          ];
-          return colors[index % colors.length];
-        }),
-        borderWidth: 0,
-        data: monthlyTotals.map(amount => parseFloat(amount)),
-      },
-    ],
-  };
+  // const monthlyChartData = {
+  //   labels: Array.from({ length: 12 }, (_, i) => new Date(0, i).toLocaleString('default', { month: 'long' })),
+  //   datasets: [
+  //     {
+  //       label: "Monthly Total Expenses",
+  //       backgroundColor: monthlyTotals.map((_, index) => {
+  //         const colors = [
+  //           'rgba(29,140,248,0.6)',
+  //           'rgba(75, 192, 192, 0.6)',
+  //           'rgba(255, 99, 132, 0.6)',
+  //           'rgba(255, 206, 86, 0.6)',
+  //           'rgba(54, 162, 235, 0.6)',
+  //           'rgba(153, 102, 255, 0.6)',
+  //           'rgba(255, 159, 64, 0.6)',
+  //           'rgba(255, 205, 86, 0.6)',
+  //           'rgba(201, 203, 207, 0.6)',
+  //           'rgba(255, 99, 132, 0.6)',
+  //           'rgba(54, 162, 235, 0.6)',
+  //           'rgba(75, 192, 192, 0.6)',
+  //         ];
+  //         return colors[index % colors.length];
+  //       }),
+  //       borderColor: monthlyTotals.map((_, index) => {
+  //         const colors = [
+  //           'rgba(29,140,248,1)',
+  //           'rgba(75, 192, 192, 1)',
+  //           'rgba(255, 99, 132, 1)',
+  //           'rgba(255, 206, 86, 1)',
+  //           'rgba(54, 162, 235, 1)',
+  //           'rgba(153, 102, 255, 1)',
+  //           'rgba(255, 159, 64, 1)',
+  //           'rgba(255, 205, 86, 1)',
+  //           'rgba(201, 203, 207, 1)',
+  //           'rgba(255, 99, 132, 1)',
+  //           'rgba(54, 162, 235, 1)',
+  //           'rgba(75, 192, 192, 1)',
+  //         ];
+  //         return colors[index % colors.length];
+  //       }),
+  //       borderWidth: 0,
+  //       data: monthlyTotals.map(amount => parseFloat(amount)),
+  //     },
+  //   ],
+  // };
 
   const totalPaidAmountBefore = commitmentsData.reduce((total, commitment) => total + parseFloat(commitment.totalPaid), 0);
   const totalPendingAmountBefore = commitmentsData.reduce((total, commitment) => total + parseFloat(commitment.totalPending), 0);
