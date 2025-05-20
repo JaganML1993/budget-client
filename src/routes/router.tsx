@@ -15,6 +15,8 @@ const CommitmentsCreate = lazy(() => import('pages/dashboard/commitmentsCreate')
 const CommitmentsEdit = lazy(() => import('pages/dashboard/commitmentsEdit'));
 const Login = lazy(() => import('pages/authentication/Login'));
 const Signup = lazy(() => import('pages/authentication/Signup'));
+const CommitmentHistory = lazy(() => import('pages/dashboard/commitmentHistory'));
+const CommitmentHistoryCreate = lazy(() => import('pages/dashboard/commitmentHistoryCreate'));
 
 const router = createBrowserRouter(
   [
@@ -43,6 +45,8 @@ const router = createBrowserRouter(
                 { path: 'commitments', element: <Commitments /> },
                 { path: 'pages/commitments/create', element: <CommitmentsCreate /> },
                 { path: 'pages/commitments/edit/:id', element: <CommitmentsEdit /> },
+                { path: 'commitment-history/:id', element: <CommitmentHistory /> },
+                { path: 'create-commitment-history/:commitmentId', element: <CommitmentHistoryCreate /> },
               ],
             },
           ],

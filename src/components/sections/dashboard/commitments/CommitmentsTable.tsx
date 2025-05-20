@@ -241,9 +241,16 @@ const OrdersStatusTable = ({ searchText }: OrdersStatusTableProps) => {
       field: 'client',
       headerName: 'Pay For',
       flex: 2,
-      minWidth: 200,
+      minWidth: 180,
       renderCell: (params: GridRenderCellParams<OrderRow, string>) => (
-        <Typography variant="subtitle1">{params.value}</Typography>
+        <Typography
+          variant="subtitle1"
+          color="primary"
+          sx={{ cursor: 'pointer', textDecoration: 'underline' }}
+          onClick={() => navigate(`/commitment-history/${params.row.id}`)}
+        >
+          {params.value}
+        </Typography>
       ),
     },
     {
@@ -456,7 +463,7 @@ const OrdersStatusTable = ({ searchText }: OrdersStatusTableProps) => {
           },
         },
       }}
-      checkboxSelection
+      // checkboxSelection
       pageSizeOptions={[10, 20, 50]}
       disableColumnMenu
       disableVirtualization

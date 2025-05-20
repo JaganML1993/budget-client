@@ -10,6 +10,8 @@ export default {
   commitments: `/${rootPaths.pagesRoot}/commitments`,
   createCommitment: `/${rootPaths.pagesRoot}/commitments/create`,
   editCommitment: `/${rootPaths.pagesRoot}/commitments/edit/:id`,
+  CommitmentHistory: `/${rootPaths.pagesRoot}/commitmentHistory/:id`,
+  createCommitmentHistory: `/${rootPaths.pagesRoot}/commitmentHistory/create/:commitmentId`,
   features: `/${rootPaths.pagesRoot}/features`,
   users: `/${rootPaths.pagesRoot}/users`,
   pricing: `/${rootPaths.pagesRoot}/pricing`,
