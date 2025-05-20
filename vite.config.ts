@@ -22,5 +22,8 @@ export default defineConfig({
     host: '0.0.0.0',
     port: 3000,
   },
-  base: '/jv-app',
+  base: '/jv-app/',
+  build: {
+    outDir: 'dist/jv-app', // This is crucial!
+  },
 });

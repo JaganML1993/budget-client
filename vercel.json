@@ -1,3 +1,5 @@
 {
-  "routes": [{ "src": "/[^.]+", "dest": "/", "status": 200 }]
+  "rewrites": [
+    { "source": "/jv-app(/.*)?", "destination": "/jv-app/index.html" }
+  ]
 }
