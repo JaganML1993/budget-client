@@ -6,6 +6,7 @@ import MainLayout from 'layouts/main-layout';
 import AuthLayout from 'layouts/auth-layout';
 import Splash from 'components/loading/Splash';
 import PageLoader from 'components/loading/PageLoader';
+import ProtectedRoute from 'components/ProtectedRoute';
 
 const App = lazy(() => import('App'));
 const Dashboard = lazy(() => import('pages/dashboard'));
@@ -24,34 +25,29 @@ const router = createBrowserRouter(
         </Suspense>
       ),
       children: [
+        // Protected routes
         {
-          path: '/',
-          element: (
-            <MainLayout>
-              <Suspense fallback={<PageLoader />}>
-                <Outlet />
-              </Suspense>
-            </MainLayout>
-          ),
+          element: <ProtectedRoute />, // <--- Wrap all protected routes
           children: [
             {
-              index: true,
-              element: <Dashboard />,
-            },
-            {
-              path: 'commitments', // ➜ /jv-app/commitments
-              element: <Commitments />,
-            },
-            {
-              path: 'pages/commitments/create',
-              element: <CommitmentsCreate />,
-            },
-            {
-              path: 'pages/commitments/edit/:id',
-              element: <CommitmentsEdit />,
+              path: '/',
+              element: (
+                <MainLayout>
+                  <Suspense fallback={<PageLoader />}>
+                    <Outlet />
+                  </Suspense>
+                </MainLayout>
+              ),
+              children: [
+                { index: true, element: <Dashboard /> },
+                { path: 'commitments', element: <Commitments /> },
+                { path: 'pages/commitments/create', element: <CommitmentsCreate /> },
+                { path: 'pages/commitments/edit/:id', element: <CommitmentsEdit /> },
+              ],
             },
           ],
         },
+        // Auth routes (not protected)
         {
           path: rootPaths.authRoot,
           element: (
@@ -60,14 +56,8 @@ const router = createBrowserRouter(
             </AuthLayout>
           ),
           children: [
-            {
-              path: paths.login,
-              element: <Login />,
-            },
-            {
-              path: paths.signup,
-              element: <Signup />,
-            },
+            { path: paths.login, element: <Login /> },
+            { path: paths.signup, element: <Signup /> },
           ],
         },
       ],
