@@ -4,7 +4,7 @@ import TopCard from './TopCard';
 const cardsData = [
   {
     id: 1,
-    title: 'Save Products',
+    title: 'Total Savings',
     value: '50.8K',
     rate: '28.4%',
     isUp: true,

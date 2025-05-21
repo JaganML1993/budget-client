@@ -12,6 +12,7 @@ export default {
   editCommitment: `/${rootPaths.pagesRoot}/commitments/edit/:id`,
   CommitmentHistory: `/${rootPaths.pagesRoot}/commitmentHistory/:id`,
   createCommitmentHistory: `/${rootPaths.pagesRoot}/commitmentHistory/create/:commitmentId`,
+  EditCommitmentHistory: `/${rootPaths.pagesRoot}/commitmentHistory/edit/:commitmentId`,
   features: `/${rootPaths.pagesRoot}/features`,
   users: `/${rootPaths.pagesRoot}/users`,
   pricing: `/${rootPaths.pagesRoot}/pricing`,

@@ -1,40 +1,51 @@
-import { fontFamily } from 'theme/typography';
-import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import Image from 'components/base/Image';
 
 interface ProductInfoProps {
   data: {
-    imageUrl: string;
     name: string;
-    inStock: number | string;
+    dueInDays: number | string;
     price: number | string;
   };
 }
 
 const Product = ({ data }: ProductInfoProps) => {
-  const { imageUrl, name, inStock, price } = data;
+  const { name, dueInDays, price } = data;
+
+  let dueLabel: string;
+  let dueColor: string;
+
+  if (typeof dueInDays === 'number') {
+    if (dueInDays < 0) {
+      dueLabel = `Due Over ${Math.abs(dueInDays)} days`;
+      dueColor = 'error.main'; // red
+    } else if (dueInDays === 0) {
+      dueLabel = 'Today';
+      dueColor = 'warning.main'; // orange
+    } else {
+      dueLabel = `Pay in ${dueInDays} days`;
+      dueColor = 'success.main'; // green
+    }
+  } else {
+    // Fallback if dueInDays is not a number
+    dueLabel = dueInDays;
+    dueColor = 'text.primary';
+  }
 
   return (
-    <Stack alignItems="center" justifyContent="space-between">
-      <Stack spacing={2} alignItems="center">
-        <Box height={46} width={46} bgcolor="info.dark" borderRadius={1.25}>
-          <Image src={imageUrl} height={1} width={1} sx={{ objectFit: 'contain' }} />
-        </Box>
-
-        <Stack direction="column">
-          <Typography variant="body2" fontWeight={600}>
-            {name}
-          </Typography>
-          <Typography variant="caption" color="text.secondary" fontWeight={500}>
-            {inStock} in stock
-          </Typography>
-        </Stack>
-      </Stack>
-
-      <Typography variant="caption" fontWeight={400} fontFamily={fontFamily.workSans}>
-        $ {price}
+    <Stack direction="row" justifyContent="space-between" alignItems="center" padding={1}>
+      <Typography variant="body2" fontWeight={600}>
+        {name}
+      </Typography>
+      <Typography
+        variant="body2"
+        fontWeight={700}
+        color={dueColor}
+      >
+        {dueLabel}
+      </Typography>
+      <Typography variant="body2" fontWeight={400}>
+        ₹{price}
       </Typography>
     </Stack>
   );
