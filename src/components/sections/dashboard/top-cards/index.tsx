@@ -1,56 +1,101 @@
+import { useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid';
 import TopCard from './TopCard';
 
-const cardsData = [
+const cardsDataTemplate = [
   {
     id: 1,
     title: 'Total Savings',
-    value: '50.8K',
-    rate: '28.4%',
+    value: '₹0.00',
+    rate: '0%',
     isUp: true,
     icon: 'carbon:favorite-filled',
   },
   {
     id: 2,
-    title: 'Stock Products',
-    value: '23.6K',
-    rate: '12.6%',
-    isUp: false,
-    icon: 'solar:bag-bold',
-  },
-  {
-    id: 3,
-    title: 'Sale Products',
-    value: '756',
-    rate: '3.1%',
+    title: 'Commitment per Month',
+    value: '₹0.00',
+    rate: '0%',
     isUp: true,
-    icon: 'ph:bag-simple-fill',
+    icon: 'solar:calendar-bold',
   },
-  {
-    id: 4,
-    title: 'Average Revenue',
-    value: '2.3K',
-    rate: '11.3%',
-    isUp: true,
-    icon: 'mingcute:currency-dollar-2-line',
-  },
+  // ...other cards
 ];
 
+const formatINR = (amount: number) => {
+  return new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    maximumFractionDigits: 2,
+  }).format(amount);
+};
+
 const TopCards = () => {
+  const [cardsData, setCardsData] = useState(cardsDataTemplate);
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const userId = user._id;
+
+    if (!userId) {
+      console.error('User ID not found in localStorage');
+      return;
+    }
+
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/admin/dashboard/top-card?userId=${userId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        let total = 0;
+        if (typeof data.totalSavings === 'number') {
+          total = data.totalSavings;
+        } else if (
+          data.totalSavings &&
+          typeof data.totalSavings === 'object' &&
+          '$numberDecimal' in data.totalSavings
+        ) {
+          total = parseFloat(data.totalSavings.$numberDecimal);
+        }
+
+        let commitments = 0;
+        if (typeof data.commitments === 'number') {
+          commitments = data.commitments;
+        } else if (
+          data.commitments &&
+          typeof data.commitments === 'object' &&
+          '$numberDecimal' in data.commitments
+        ) {
+          commitments = parseFloat(data.commitments.$numberDecimal);
+        }
+
+        setCardsData((prev) =>
+          prev.map((card) => {
+            if (card.id === 1) {
+              return { ...card, value: formatINR(total) };
+            }
+            if (card.id === 2) {
+              return { ...card, value: formatINR(commitments) };
+            }
+            return card;
+          }),
+        );
+      })
+      .catch((err) => {
+        console.error('Failed to fetch top card data', err);
+      });
+  }, []);
+
   return (
     <Grid container spacing={{ xs: 2.5, sm: 3, lg: 3.75 }}>
-      {cardsData.map((item) => {
-        return (
-          <TopCard
-            key={item.id}
-            title={item.title}
-            value={item.value}
-            rate={item.rate}
-            isUp={item.isUp}
-            icon={item.icon}
-          />
-        );
-      })}
+      {cardsData.map((item) => (
+        <TopCard
+          key={item.id}
+          title={item.title}
+          value={item.value}
+          rate={item.rate}
+          isUp={item.isUp}
+          icon={item.icon}
+        />
+      ))}
     </Grid>
   );
 };

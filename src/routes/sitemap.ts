@@ -27,6 +27,13 @@ const sitemap: MenuItem[] = [
     active: true,
   },
   {
+    id: 'pricing',
+    subheader: 'Savings',
+    path: '/savings',
+    icon: 'mingcute:currency-dollar-2-line',
+    active: true,
+  },
+  {
     id: 'features',
     subheader: 'Commitments',
     path: '/commitments',
@@ -39,12 +46,6 @@ const sitemap: MenuItem[] = [
   //   path: '#!',
   //   icon: 'mingcute:user-2-fill',
   // },
-  {
-    id: 'pricing',
-    subheader: 'Expenses',
-    path: '#!',
-    icon: 'mingcute:currency-dollar-2-line',
-  },
   // {
   //   id: 'authentication',
   //   subheader: 'Authentication',

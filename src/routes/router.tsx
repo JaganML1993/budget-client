@@ -18,6 +18,9 @@ const Signup = lazy(() => import('pages/authentication/Signup'));
 const CommitmentHistory = lazy(() => import('pages/dashboard/commitmentHistory'));
 const CommitmentHistoryCreate = lazy(() => import('pages/dashboard/commitmentHistoryCreate'));
 const CommitmentHistoryEdit = lazy(() => import('pages/dashboard/commitmentHistoryEdit'));
+const Savings = lazy(() => import('pages/dashboard/savings'));
+const SavingsCreate = lazy(() => import('pages/dashboard/savingsCreate'));
+const SavingsEdit = lazy(() => import('pages/dashboard/savingsEdit'));
 
 const router = createBrowserRouter(
   [
@@ -49,6 +52,9 @@ const router = createBrowserRouter(
                 { path: 'commitment-history/:id', element: <CommitmentHistory /> },
                 { path: 'create-commitment-history/:commitmentId', element: <CommitmentHistoryCreate /> },
                 { path: 'edit-commitment-history/:id', element: <CommitmentHistoryEdit /> },
+                { path: 'savings', element: <Savings /> },
+                { path: 'pages/savings/create', element: <SavingsCreate /> },
+                { path: 'pages/savings/edit/:id', element: <SavingsEdit /> },
               ],
             },
           ],

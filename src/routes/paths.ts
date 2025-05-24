@@ -13,6 +13,8 @@ export default {
   CommitmentHistory: `/${rootPaths.pagesRoot}/commitmentHistory/:id`,
   createCommitmentHistory: `/${rootPaths.pagesRoot}/commitmentHistory/create/:commitmentId`,
   EditCommitmentHistory: `/${rootPaths.pagesRoot}/commitmentHistory/edit/:commitmentId`,
+  createSavings: `/${rootPaths.pagesRoot}/savings/create`,
+  editSavings: `/${rootPaths.pagesRoot}/savings/edit/:id`,
   features: `/${rootPaths.pagesRoot}/features`,
   users: `/${rootPaths.pagesRoot}/users`,
   pricing: `/${rootPaths.pagesRoot}/pricing`,

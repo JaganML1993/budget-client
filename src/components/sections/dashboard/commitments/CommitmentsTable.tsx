@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { format } from 'date-fns';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
@@ -8,7 +7,6 @@ import IconifyIcon from 'components/base/IconifyIcon';
 import DataGridFooter from 'components/common/DataGridFooter';
 import type { SelectChangeEvent } from '@mui/material/Select';
 import { useNavigate } from 'react-router-dom';
-
 import {
   GridRowModesModel,
   GridRowModes,
@@ -23,6 +21,7 @@ import {
   useGridApiRef,
   GridRenderCellParams,
   GridApi,
+  GridPaginationModel,
 } from '@mui/x-data-grid';
 
 // Enums to match backend schema
@@ -78,18 +77,16 @@ interface OrderRow {
   id: string;
   order: number;
   client: string;
-  date: Date | string;
-  status: 'ongoing' | 'completed' | 'canceled'; // Matches backend status with additional frontend state
-  payType: string;
-  category: string;
   emiAmount: number;
-  // paidAmount: number;
-  // balanceAmount: number;
   totalEmi: number;
   paid: number;
   pending: number;
   dueDate: number;
+  status: 'ongoing' | 'completed' | 'canceled';
+  payType: string;
+  category: string;
   remarks: string;
+  date: Date | string;
   raw: Commitment;
 }
 
@@ -97,18 +94,23 @@ interface OrdersStatusTableProps {
   searchText: string;
 }
 
-async function fetchCommitments(): Promise<Commitment[]> {
+// Server-side fetch with pagination
+async function fetchCommitments(
+  page = 1,
+  limit = 10,
+): Promise<{ data: Commitment[]; totalPages: number; totalItems: number }> {
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const createdBy = user._id;
 
-  // Only add createdBy if it exists
   const url = new URL(`${import.meta.env.VITE_API_BASE_URL}/admin/commitments`);
   if (createdBy) url.searchParams.append('createdBy', createdBy);
+  url.searchParams.append('page', String(page));
+  url.searchParams.append('limit', String(limit));
 
   const response = await fetch(url.toString());
   if (!response.ok) throw new Error('Failed to fetch data');
   const data: ApiResponse = await response.json();
-  return data.data;
+  return { data: data.data, totalPages: data.totalPages, totalItems: data.totalPages * limit };
 }
 
 const parseDecimal = (value: DecimalValue | undefined): number => {
@@ -137,35 +139,42 @@ const OrdersStatusTable = ({ searchText }: OrdersStatusTableProps) => {
   const apiRef = useGridApiRef<GridApi>();
   const [rows, setRows] = useState<OrderRow[]>([]);
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
+  const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
+    page: 0, // DataGrid is 0-based
+    pageSize: 10,
+  });
+  const [rowCount, setRowCount] = useState(0);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchCommitments()
-      .then((data) => {
+    setLoading(true);
+    fetchCommitments(paginationModel.page + 1, paginationModel.pageSize)
+      .then(({ data, totalPages }) => {
         const mappedRows: OrderRow[] = data.map((item, index) => ({
           id: item._id,
-          order: index + 1,
+          order: paginationModel.page * paginationModel.pageSize + index + 1,
           client: item.payFor,
-          date: new Date(item.createdAt),
+          emiAmount: parseDecimal(item.emiAmount),
+          totalEmi: item.totalEmi,
+          paid: parseDecimal(item.paid),
+          pending:  item.totalEmi - parseDecimal(item.paid),
+          dueDate: item.dueDate,
           status: item.status === Status.Ongoing ? 'ongoing' : 'completed',
           payType: getPayTypeLabel(item.payType),
           category: getCategoryLabel(item.category),
-          emiAmount: parseDecimal(item.emiAmount),
-          // paidAmount: parseDecimal(item.paidAmount),
-          // balanceAmount: parseDecimal(item.balanceAmount),
-          totalEmi: item.totalEmi,
-          paid: parseDecimal(item.paid),
-          pending: parseDecimal(item.pending),
-          dueDate: item.dueDate,
           remarks: item.remarks,
+          date: new Date(item.createdAt),
           raw: item,
         }));
         setRows(mappedRows);
+        setRowCount(totalPages * paginationModel.pageSize);
       })
       .catch((error) => {
         console.error('Error loading commitments:', error);
-      });
-  }, []);
+      })
+      .finally(() => setLoading(false));
+  }, [paginationModel.page, paginationModel.pageSize]);
 
   useEffect(() => {
     apiRef.current?.setQuickFilterValues(searchText.split(/\b\W+\b/).filter((word) => word !== ''));
@@ -198,14 +207,15 @@ const OrdersStatusTable = ({ searchText }: OrdersStatusTableProps) => {
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/admin/commitments/${id}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId }), // <-- send userId in body
+        body: JSON.stringify({ userId }),
       });
       if (!response.ok) {
         const err = await response.json();
         alert(err.message || 'Failed to delete commitment');
         return;
       }
-      setRows(rows.filter((row) => row.id !== id));
+      setRows((prev) => prev.filter((row) => row.id !== id));
+      setRowCount((prev) => prev - 1);
     } catch (error) {
       alert('Error deleting commitment');
       console.error(error);
@@ -229,6 +239,7 @@ const OrdersStatusTable = ({ searchText }: OrdersStatusTableProps) => {
     setRowModesModel(newRowModesModel);
   };
 
+  // COLUMN ORDER as requested
   const columns: GridColDef<OrderRow>[] = [
     {
       field: 'order',
@@ -254,16 +265,45 @@ const OrdersStatusTable = ({ searchText }: OrdersStatusTableProps) => {
       ),
     },
     {
-      field: 'date',
-      headerName: 'Created At',
+      field: 'emiAmount',
+      headerName: 'EMI Amount',
       flex: 1,
-      minWidth: 140,
-      renderCell: (params: GridRenderCellParams<OrderRow, Date | string>) => {
-        if (!params.value) return '-';
-        const dateObj = params.value instanceof Date ? params.value : new Date(params.value);
-        if (isNaN(dateObj.getTime())) return '-';
-        return format(dateObj, 'dd MMM, yyyy');
-      },
+      minWidth: 120,
+      align: 'right',
+      headerAlign: 'right',
+      renderCell: (params: GridRenderCellParams<OrderRow, number>) => (
+        <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
+          {formatCurrency(params.value)}
+        </Typography>
+      ),
+    },
+    {
+      field: 'totalEmi',
+      headerName: 'Total EMI',
+      flex: 1,
+      minWidth: 100,
+      type: 'number',
+    },
+    {
+      field: 'paid',
+      headerName: 'Paid',
+      flex: 1,
+      minWidth: 100,
+      type: 'number',
+    },
+    {
+      field: 'pending',
+      headerName: 'Pending',
+      flex: 1,
+      minWidth: 100,
+      type: 'number',
+    },
+    {
+      field: 'dueDate',
+      headerName: 'Due Date',
+      flex: 1,
+      minWidth: 100,
+      type: 'number',
     },
     {
       field: 'status',
@@ -303,73 +343,6 @@ const OrdersStatusTable = ({ searchText }: OrdersStatusTableProps) => {
       headerName: 'Category',
       flex: 1,
       minWidth: 120,
-    },
-    {
-      field: 'emiAmount',
-      headerName: 'EMI Amount',
-      flex: 1,
-      minWidth: 120,
-      align: 'right',
-      headerAlign: 'right',
-      renderCell: (params: GridRenderCellParams<OrderRow, number>) => (
-        <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
-          {formatCurrency(params.value)}
-        </Typography>
-      ),
-    },
-    // {
-    //   field: 'paidAmount',
-    //   headerName: 'Paid Amount',
-    //   flex: 1,
-    //   minWidth: 120,
-    //   align: 'right',
-    //   headerAlign: 'right',
-    //   renderCell: (params: GridRenderCellParams<OrderRow, number>) => (
-    //     <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
-    //       {formatCurrency(params.value)}
-    //     </Typography>
-    //   ),
-    // },
-    // {
-    //   field: 'balanceAmount',
-    //   headerName: 'Balance Amount',
-    //   flex: 1,
-    //   minWidth: 120,
-    //   align: 'right',
-    //   headerAlign: 'right',
-    //   renderCell: (params: GridRenderCellParams<OrderRow, number>) => (
-    //     <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
-    //       {formatCurrency(params.value)}
-    //     </Typography>
-    //   ),
-    // },
-    {
-      field: 'totalEmi',
-      headerName: 'Total EMI',
-      flex: 1,
-      minWidth: 100,
-      type: 'number',
-    },
-    {
-      field: 'paid',
-      headerName: 'Paid EMI',
-      flex: 1,
-      minWidth: 100,
-      type: 'number',
-    },
-    {
-      field: 'pending',
-      headerName: 'Pending EMI',
-      flex: 1,
-      minWidth: 100,
-      type: 'number',
-    },
-    {
-      field: 'dueDate',
-      headerName: 'Due Date',
-      flex: 1,
-      minWidth: 100,
-      type: 'number',
     },
     {
       field: 'remarks',
@@ -456,14 +429,11 @@ const OrdersStatusTable = ({ searchText }: OrdersStatusTableProps) => {
       columns={columns}
       rowHeight={45}
       editMode="row"
-      initialState={{
-        pagination: {
-          paginationModel: {
-            pageSize: 10,
-          },
-        },
-      }}
-      // checkboxSelection
+      loading={loading}
+      paginationMode="server"
+      rowCount={rowCount}
+      paginationModel={paginationModel}
+      onPaginationModelChange={setPaginationModel}
       pageSizeOptions={[10, 20, 50]}
       disableColumnMenu
       disableVirtualization

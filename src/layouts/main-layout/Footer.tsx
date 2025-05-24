@@ -1,5 +1,4 @@
 import Typography from '@mui/material/Typography';
-import Link from '@mui/material/Link';
 
 const Footer = () => {
   return (
@@ -12,10 +11,7 @@ const Footer = () => {
       sx={{ textAlign: { xs: 'center', md: 'right' } }}
       letterSpacing={0.5}
     >
-      Made with ❤️ by{' '}
-      <Link href="https://themewagon.com/" target="_blank" rel="noreferrer">
-        {'ThemeWagon'}
-      </Link>
+      Made by J❤️V {' '}
     </Typography>
   );
 };
