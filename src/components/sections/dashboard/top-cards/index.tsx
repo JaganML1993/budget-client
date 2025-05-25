@@ -19,7 +19,15 @@ const cardsDataTemplate = [
     isUp: true,
     icon: 'solar:calendar-bold',
   },
-  // ...other cards
+  {
+    id: 3,
+    title: 'Commitments Full',
+    value: '₹0.00',
+    rate: '0%',
+    isUp: true,
+    icon: 'carbon:chart-bar', // Choose an appropriate icon
+  },
+  // ...add more cards here if needed
 ];
 
 const formatINR = (amount: number) => {
@@ -67,6 +75,17 @@ const TopCards = () => {
           commitments = parseFloat(data.commitments.$numberDecimal);
         }
 
+        let commitmentsFull = 0;
+        if (typeof data.commitmentsFull === 'number') {
+          commitmentsFull = data.commitmentsFull;
+        } else if (
+          data.commitmentsFull &&
+          typeof data.commitmentsFull === 'object' &&
+          '$numberDecimal' in data.commitmentsFull
+        ) {
+          commitmentsFull = parseFloat(data.commitmentsFull.$numberDecimal);
+        }
+
         setCardsData((prev) =>
           prev.map((card) => {
             if (card.id === 1) {
@@ -74,6 +93,9 @@ const TopCards = () => {
             }
             if (card.id === 2) {
               return { ...card, value: formatINR(commitments) };
+            }
+            if (card.id === 3) {
+              return { ...card, value: formatINR(commitmentsFull) };
             }
             return card;
           }),

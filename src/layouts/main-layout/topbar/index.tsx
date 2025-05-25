@@ -1,11 +1,11 @@
-import { fontFamily } from 'theme/typography';
+// import { fontFamily } from 'theme/typography';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 // import Tooltip from '@mui/material/Tooltip';
 import Toolbar from '@mui/material/Toolbar';
 import ButtonBase from '@mui/material/ButtonBase';
 import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
+// import Typography from '@mui/material/Typography';
 import IconifyIcon from 'components/base/IconifyIcon';
 import Image from 'components/base/Image';
 import LogoImg from 'assets/images/Logo.png';
@@ -48,15 +48,15 @@ const Topbar = ({ isClosing, mobileOpen, setMobileOpen }: TopbarProps) => {
           <Image src={LogoImg} alt="logo" height={24} width={24} />
         </ButtonBase>
 
-        <Typography
+        {/* <Typography
           variant="h5"
           fontWeight={600}
           letterSpacing={1}
           fontFamily={fontFamily.workSans}
           display={{ xs: 'none', lg: 'block' }}
         >
-          JV-APP
-        </Typography>
+          J❤️V
+        </Typography> */}
       </Stack>
 
       {/* <Stack spacing={1} alignItems="center">

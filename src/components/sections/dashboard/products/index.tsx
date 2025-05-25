@@ -28,11 +28,17 @@ const UpcomingPayments: React.FC = () => {
 
     fetch(`${API_BASE_URL}/admin/dashboard/upcoming-payments?userId=${userId}`)
       .then((res) => res.json())
-      .then((data: Payment[]) => {
-        setPayments(data);
+      .then((data) => {
+        // Ensure data is always an array
+        if (Array.isArray(data)) {
+          setPayments(data);
+        } else {
+          setPayments([]);
+        }
         setLoading(false);
       })
       .catch(() => {
+        setPayments([]); // Prevents map error
         setLoading(false);
         alert('Failed to fetch upcoming payments.');
       });

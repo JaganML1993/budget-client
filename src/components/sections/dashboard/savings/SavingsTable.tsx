@@ -17,6 +17,9 @@ import {
   GridRowId,
 } from '@mui/x-data-grid';
 
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+
 const CATEGORY_LABELS: Record<number, string> = {
   1: 'Bank Transfer',
   2: 'Cash',
@@ -109,6 +112,10 @@ const ExpenseTable = ({ searchText }: ExpenseTableProps) => {
   const [category, setCategory] = useState<number | ''>('');
   const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
+
+  // Responsive media query
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
     setLoading(true);
@@ -261,11 +268,12 @@ const ExpenseTable = ({ searchText }: ExpenseTableProps) => {
   return (
     <div>
       <div
-        style={{
+       style={{
           display: 'flex',
-          gap: 16,
+          flexDirection: isMobile ? 'column' : 'row',
+          gap: isMobile ? 8 : 16,
           marginBottom: 16,
-          alignItems: 'center',
+          alignItems: isMobile ? 'stretch' : 'center',
           flexWrap: 'wrap',
         }}
       >

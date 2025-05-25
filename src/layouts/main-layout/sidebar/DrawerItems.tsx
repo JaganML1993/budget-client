@@ -31,7 +31,7 @@ const DrawerItems = () => {
         <ButtonBase component={Link} href="/" disableRipple>
           <Image src={LogoImg} alt="logo" height={24} width={24} sx={{ mr: 1 }} />
           <Typography variant="h5" color="text.primary" fontWeight={600} letterSpacing={1}>
-            Dashdark X
+            J❤️V
           </Typography>
         </ButtonBase>
       </Stack>
